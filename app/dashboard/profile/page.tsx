@@ -1,65 +1,43 @@
 /**
  * Profile Page
  * Route: /dashboard/profile
- * Server component for profile management
+ * Manage user identity, contact info, and social links
  */
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { getProfileByUserId } from '@/lib/services/profile'
 import { prisma } from '@/lib/prisma'
-import { redirect } from 'next/navigation'
 import { ProfileForm } from '@/components/profile/profile-form'
+import styles from './profile.module.css'
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.user?.id) {
-    redirect('/auth/signin')
+    return <div>Unauthorized</div>
   }
 
-  // Fetch user and profile data
+  // Get user with profile
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: {
-      email: true,
-      fullName: true,
-    },
-  })
-
-  const profile = await prisma.profile.findUnique({
-    where: { userId: session.user.id },
+    include: { profile: true },
   })
 
   if (!user) {
-    redirect('/auth/signin')
+    return <div>User not found</div>
   }
 
   return (
-    <div>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 className="text-2xl font-bold" style={{ marginBottom: '0.5rem', fontFamily: 'var(--font-outfit)' }}>
-          Profile
-        </h1>
-        <p className="text-muted-foreground" style={{ fontFamily: 'var(--font-jakarta)' }}>
+    <div className={styles.profilePage}>
+      <div className={styles.profileHeader}>
+        <h1 className={styles.pageTitle}>Profile</h1>
+        <p className={styles.pageDescription}>
           Manage your identity and contact information
         </p>
       </div>
-      <ProfileForm
-        initialData={profile ? {
-          fullName: profile.fullName || user.fullName || '',
-          title: profile.title,
-          bio: profile.bio,
-          location: profile.location,
-          phone: profile.phone,
-          website: profile.website,
-          github: profile.github,
-          linkedin: profile.linkedin,
-          otherLink: profile.otherLink,
-          otherLinkLabel: profile.otherLinkLabel,
-          isPublic: profile.isPublic,
-        } : undefined}
-        userEmail={user.email}
-      />
+
+      <ProfileForm user={user} />
     </div>
   )
 }

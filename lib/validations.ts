@@ -14,7 +14,7 @@ export const signinSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 })
 
-// Profile validations
+// Profile validations (legacy - use profile.ts instead)
 export const profileUpdateSchema = z.object({
   bio: z.string().optional(),
   website: z.string().url('Invalid URL').optional().or(z.literal('')),

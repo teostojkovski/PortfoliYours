@@ -1,0 +1,26 @@
+/* Profile Page Styles */
+
+.profilePage {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.profileHeader {
+  margin-bottom: 2rem;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-outfit);
+}
+
+.pageDescription {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  font-family: var(--font-jakarta);
+}
+

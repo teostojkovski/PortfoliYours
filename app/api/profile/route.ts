@@ -1,45 +1,15 @@
 /**
- * Profile API Routes
- * GET /api/profile - Get user profile
- * PUT /api/profile - Update user profile
+ * Profile API Route
+ * Route: PUT /api/profile
+ * Updates user profile information
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { z } from 'zod'
 import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { updateProfile } from '@/lib/services/profile'
 import { profileUpdateSchema } from '@/lib/validations/profile'
-
-export async function GET(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions)
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const profile = await prisma.profile.findUnique({
-      where: { userId: session.user.id },
-      include: {
-        user: {
-          select: {
-            email: true,
-            fullName: true,
-          },
-        },
-      },
-    })
-
-    return NextResponse.json({ profile })
-  } catch (error) {
-    console.error('Profile fetch error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
+import { z } from 'zod'
 
 export async function PUT(request: NextRequest) {
   try {
@@ -52,39 +22,9 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const validatedData = profileUpdateSchema.parse(body)
 
-    // Update or create profile
-    const profile = await prisma.profile.upsert({
-      where: { userId: session.user.id },
-      update: {
-        fullName: validatedData.fullName || null,
-        title: validatedData.title || null,
-        bio: validatedData.bio || null,
-        location: validatedData.location || null,
-        phone: validatedData.phone || null,
-        website: validatedData.website || null,
-        github: validatedData.github || null,
-        linkedin: validatedData.linkedin || null,
-        otherLink: validatedData.otherLink || null,
-        otherLinkLabel: validatedData.otherLinkLabel || null,
-        isPublic: validatedData.isPublic,
-      },
-      create: {
-        userId: session.user.id,
-        fullName: validatedData.fullName || null,
-        title: validatedData.title || null,
-        bio: validatedData.bio || null,
-        location: validatedData.location || null,
-        phone: validatedData.phone || null,
-        website: validatedData.website || null,
-        github: validatedData.github || null,
-        linkedin: validatedData.linkedin || null,
-        otherLink: validatedData.otherLink || null,
-        otherLinkLabel: validatedData.otherLinkLabel || null,
-        isPublic: validatedData.isPublic,
-      },
-    })
+    const profile = await updateProfile(session.user.id, validatedData)
 
-    return NextResponse.json({ profile })
+    return NextResponse.json({ profile }, { status: 200 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -94,6 +34,27 @@ export async function PUT(request: NextRequest) {
     }
 
     console.error('Profile update error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { getProfileByUserId } = await import('@/lib/services/profile')
+    const profile = await getProfileByUserId(session.user.id)
+
+    return NextResponse.json({ profile }, { status: 200 })
+  } catch (error) {
+    console.error('Profile fetch error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

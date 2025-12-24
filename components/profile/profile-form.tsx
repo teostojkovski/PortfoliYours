@@ -5,319 +5,269 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { Button } from '@/components/ui/button'
+import { useState, useTransition } from 'react'
+import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Profile, User } from '@prisma/client'
 import styles from './profile-form.module.css'
 
-interface ProfileData {
-  fullName: string
-  title?: string | null
-  bio?: string | null
-  location?: string | null
-  phone?: string | null
-  website?: string | null
-  github?: string | null
-  linkedin?: string | null
-  otherLink?: string | null
-  otherLinkLabel?: string | null
-  isPublic: boolean
-}
-
 interface ProfileFormProps {
-  initialData?: ProfileData
-  userEmail: string
+  user: {
+    id: string
+    email: string
+    fullName: string
+    profile: {
+      id: string
+      title: string | null
+      bio: string | null
+      location: string | null
+      phone: string | null
+      avatarUrl: string | null
+      website: string | null
+      github: string | null
+      linkedin: string | null
+      otherLink: string | null
+      otherLabel: string | null
+      isPublic: boolean
+    } | null
+  }
 }
 
-export function ProfileForm({ initialData, userEmail }: ProfileFormProps) {
-  const { data: session } = useSession()
-  const [formData, setFormData] = useState<ProfileData>({
-    fullName: initialData?.fullName || '',
-    title: initialData?.title || '',
-    bio: initialData?.bio || '',
-    location: initialData?.location || '',
-    phone: initialData?.phone || '',
-    website: initialData?.website || '',
-    github: initialData?.github || '',
-    linkedin: initialData?.linkedin || '',
-    otherLink: initialData?.otherLink || '',
-    otherLinkLabel: initialData?.otherLinkLabel || '',
-    isPublic: initialData?.isPublic || false,
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isLoading, setIsLoading] = useState(false)
-  const [successMessage, setSuccessMessage] = useState('')
+export function ProfileForm({ user }: ProfileFormProps) {
+  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        fullName: initialData.fullName || '',
-        title: initialData.title || '',
-        bio: initialData.bio || '',
-        location: initialData.location || '',
-        phone: initialData.phone || '',
-        website: initialData.website || '',
-        github: initialData.github || '',
-        linkedin: initialData.linkedin || '',
-        otherLink: initialData.otherLink || '',
-        otherLinkLabel: initialData.otherLinkLabel || '',
-        isPublic: initialData.isPublic || false,
-      })
-    }
-  }, [initialData])
+  const [formData, setFormData] = useState({
+    title: user.profile?.title || '',
+    bio: user.profile?.bio || '',
+    location: user.profile?.location || '',
+    phone: user.profile?.phone || '',
+    website: user.profile?.website || '',
+    github: user.profile?.github || '',
+    linkedin: user.profile?.linkedin || '',
+    otherLink: user.profile?.otherLink || '',
+    otherLabel: user.profile?.otherLabel || '',
+    isPublic: user.profile?.isPublic ?? false,
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-    setErrors({})
-    setSuccessMessage('')
+    setError(null)
+    setSuccess(false)
 
-    try {
-      const response = await fetch('/api/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
+    startTransition(async () => {
+      try {
+        const response = await fetch('/api/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        })
 
-      const data = await response.json()
+        const data = await response.json()
 
-      if (!response.ok) {
-        if (data.details) {
-          const fieldErrors: Record<string, string> = {}
-          data.details.forEach((error: any) => {
-            fieldErrors[error.path[0]] = error.message
-          })
-          setErrors(fieldErrors)
-        } else {
-          setErrors({ general: data.error || 'Failed to update profile' })
+        if (!response.ok) {
+          setError(data.error || 'Failed to update profile')
+          return
         }
-        return
-      }
 
-      setSuccessMessage('Profile updated successfully!')
-      setTimeout(() => setSuccessMessage(''), 3000)
-    } catch (err) {
-      setErrors({ general: 'An error occurred. Please try again.' })
-    } finally {
-      setIsLoading(false)
-    }
+        setSuccess(true)
+        setTimeout(() => setSuccess(false), 3000)
+      } catch (err) {
+        setError('An error occurred. Please try again.')
+      }
+    })
   }
 
   return (
     <form onSubmit={handleSubmit} className={styles.profileForm}>
-      {successMessage && (
-        <div className={styles.successMessage}>{successMessage}</div>
-      )}
-      {errors.general && (
-        <div className={styles.errorMessage}>{errors.general}</div>
-      )}
-
-      {/* Profile Picture Section */}
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Profile Picture</h2>
-        <p className={styles.sectionDescription}>Optional. Upload your profile image.</p>
-        <div className={styles.avatarSection}>
-          {/* TODO: Implement image upload */}
-          <div className={styles.avatarPlaceholder}>Image Upload Coming Soon</div>
-        </div>
-      </section>
-
       {/* Basic Information */}
-      <section className={styles.section}>
+      <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Basic Information</h2>
         <div className={styles.formGrid}>
-          <div className={styles.formGroup}>
-            <Label htmlFor="fullName">
-              Full Name <span className={styles.required}>*</span>
-            </Label>
+          <div className={styles.formField}>
+            <Label htmlFor="fullName">Full Name</Label>
             <Input
               id="fullName"
-              value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              required
+              value={user.fullName}
+              disabled
+              className={styles.readOnlyInput}
             />
-            {errors.fullName && (
-              <span className={styles.fieldError}>{errors.fullName}</span>
-            )}
+            <p className={styles.fieldHint}>Name cannot be changed here</p>
           </div>
 
-          <div className={styles.formGroup}>
+          <div className={styles.formField}>
             <Label htmlFor="title">Professional Title</Label>
             <Input
               id="title"
-              value={formData.title || ''}
+              value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="e.g. Frontend Developer"
+              maxLength={100}
             />
-            {errors.title && (
-              <span className={styles.fieldError}>{errors.title}</span>
-            )}
           </div>
 
-          <div className={styles.formGroup}>
+          <div className={styles.formField}>
             <Label htmlFor="location">Location</Label>
             <Input
               id="location"
-              value={formData.location || ''}
+              value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               placeholder="City / Country"
+              maxLength={200}
             />
-            {errors.location && (
-              <span className={styles.fieldError}>{errors.location}</span>
-            )}
           </div>
 
-          <div className={styles.formGroupFull}>
+          <div className={styles.formFieldFull}>
             <Label htmlFor="bio">Short Bio</Label>
             <textarea
               id="bio"
-              className={styles.textarea}
-              value={formData.bio || ''}
+              value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              placeholder="A brief summary about yourself..."
               maxLength={500}
+              className={styles.textarea}
               rows={4}
-              placeholder="A brief summary of yourself..."
             />
-            <div className={styles.charCount}>
-              {(formData.bio || '').length} / 500
-            </div>
-            {errors.bio && (
-              <span className={styles.fieldError}>{errors.bio}</span>
-            )}
+            <p className={styles.charCount}>{formData.bio.length}/500</p>
           </div>
         </div>
-      </section>
+      </Card>
 
       {/* Contact Information */}
-      <section className={styles.section}>
+      <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Contact Information</h2>
         <div className={styles.formGrid}>
-          <div className={styles.formGroup}>
+          <div className={styles.formField}>
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
-              value={userEmail}
+              value={user.email}
               disabled
-              className={styles.disabledInput}
+              className={styles.readOnlyInput}
             />
-            <p className={styles.helpText}>Email is managed through authentication</p>
+            <p className={styles.fieldHint}>Email is read-only (auth source)</p>
           </div>
 
-          <div className={styles.formGroup}>
+          <div className={styles.formField}>
             <Label htmlFor="phone">Phone</Label>
             <Input
               id="phone"
               type="tel"
-              value={formData.phone || ''}
+              value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="+1 (555) 123-4567"
+              placeholder="+1 234 567 8900"
+              maxLength={20}
             />
-            {errors.phone && (
-              <span className={styles.fieldError}>{errors.phone}</span>
-            )}
           </div>
         </div>
-      </section>
+      </Card>
 
       {/* Social & External Links */}
-      <section className={styles.section}>
+      <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Social & External Links</h2>
         <div className={styles.formGrid}>
-          <div className={styles.formGroup}>
+          <div className={styles.formField}>
             <Label htmlFor="website">Personal Website</Label>
             <Input
               id="website"
               type="url"
-              value={formData.website || ''}
+              value={formData.website}
               onChange={(e) => setFormData({ ...formData, website: e.target.value })}
               placeholder="https://yourwebsite.com"
             />
-            {errors.website && (
-              <span className={styles.fieldError}>{errors.website}</span>
-            )}
           </div>
 
-          <div className={styles.formGroup}>
+          <div className={styles.formField}>
             <Label htmlFor="github">GitHub</Label>
             <Input
               id="github"
               type="url"
-              value={formData.github || ''}
+              value={formData.github}
               onChange={(e) => setFormData({ ...formData, github: e.target.value })}
               placeholder="https://github.com/username"
             />
-            {errors.github && (
-              <span className={styles.fieldError}>{errors.github}</span>
-            )}
           </div>
 
-          <div className={styles.formGroup}>
+          <div className={styles.formField}>
             <Label htmlFor="linkedin">LinkedIn</Label>
             <Input
               id="linkedin"
               type="url"
-              value={formData.linkedin || ''}
+              value={formData.linkedin}
               onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
               placeholder="https://linkedin.com/in/username"
             />
-            {errors.linkedin && (
-              <span className={styles.fieldError}>{errors.linkedin}</span>
-            )}
           </div>
 
-          <div className={styles.formGroup}>
-            <Label htmlFor="otherLinkLabel">Other Link Label</Label>
+          <div className={styles.formField}>
+            <Label htmlFor="otherLabel">Other Link Label</Label>
             <Input
-              id="otherLinkLabel"
-              value={formData.otherLinkLabel || ''}
-              onChange={(e) => setFormData({ ...formData, otherLinkLabel: e.target.value })}
+              id="otherLabel"
+              value={formData.otherLabel}
+              onChange={(e) => setFormData({ ...formData, otherLabel: e.target.value })}
               placeholder="e.g. Twitter, Portfolio"
+              maxLength={50}
             />
           </div>
 
-          <div className={styles.formGroup}>
+          <div className={styles.formField}>
             <Label htmlFor="otherLink">Other Link URL</Label>
             <Input
               id="otherLink"
               type="url"
-              value={formData.otherLink || ''}
+              value={formData.otherLink}
               onChange={(e) => setFormData({ ...formData, otherLink: e.target.value })}
               placeholder="https://..."
             />
-            {errors.otherLink && (
-              <span className={styles.fieldError}>{errors.otherLink}</span>
-            )}
           </div>
         </div>
-      </section>
+      </Card>
 
       {/* Profile Visibility */}
-      <section className={styles.section}>
+      <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Profile Visibility</h2>
         <div className={styles.visibilitySection}>
-          <label className={styles.switchLabel}>
+          <div className={styles.visibilityInfo}>
+            <Label htmlFor="isPublic" className={styles.visibilityLabel}>
+              Make profile public
+            </Label>
+            <p className={styles.visibilityDescription}>
+              Allow others to view your public profile at /u/[username]
+            </p>
+          </div>
+          <label className={styles.toggleSwitch}>
             <input
               type="checkbox"
               checked={formData.isPublic}
               onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-              className={styles.switch}
+              className={styles.toggleInput}
             />
-            <span className={styles.switchText}>
-              Make profile public (visible at /u/[username])
-            </span>
+            <span className={styles.toggleSlider}></span>
           </label>
-          <p className={styles.helpText}>
-            Private by default. Public profiles are visible to anyone with the link.
-          </p>
         </div>
-      </section>
+      </Card>
 
+      {/* Error/Success Messages */}
+      {error && (
+        <div className={styles.errorMessage}>
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className={styles.successMessage}>
+          Profile updated successfully!
+        </div>
+      )}
+
+      {/* Submit Button */}
       <div className={styles.formActions}>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Saving...' : 'Save Changes'}
+        <Button type="submit" disabled={isPending} className={styles.saveButton}>
+          {isPending ? 'Saving...' : 'Save Changes'}
         </Button>
       </div>
     </form>

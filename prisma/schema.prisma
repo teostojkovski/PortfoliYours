@@ -36,18 +36,17 @@ model User {
 model Profile {
   id          String   @id @default(cuid())
   userId      String   @unique
-  fullName    String?
-  title       String?
-  bio         String?
-  location    String?
+  title       String?  // Professional title (e.g. Frontend Developer)
+  bio         String?  // Short bio (max length enforced in app)
+  location    String?  // City / Country
   phone       String?
-  avatarUrl   String?
+  avatarUrl   String?  // Profile picture URL
   website     String?
   github      String?
   linkedin    String?
-  otherLink   String?
-  otherLinkLabel String?
-  isPublic    Boolean  @default(false)
+  otherLink   String?  // Custom label link
+  otherLabel  String?  // Label for other link
+  isPublic    Boolean  @default(false) // Profile visibility
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

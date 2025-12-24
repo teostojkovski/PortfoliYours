@@ -50,6 +50,10 @@
   object-fit: contain;
 }
 
+.sidebarCollapsed .sidebarHeader {
+  padding: 0 0.75rem;
+}
+
 .sidebarNav {
   flex: 1;
   padding: 1rem 0.75rem;
