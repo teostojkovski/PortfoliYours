@@ -1,0 +1,168 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  fullName      String
+  dateOfBirth   DateTime
+  county        String
+  avatar        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  profile       Profile?
+  cv            CV?
+  githubProjects GitHubProject[]
+  upworkProjects UpworkProject[]
+  experiences   Experience[]
+  applications  Application[]
+  portfolioItems PortfolioItem[]
+
+  @@map("users")
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  fullName    String?
+  title       String?
+  bio         String?
+  location    String?
+  phone       String?
+  avatarUrl   String?
+  website     String?
+  github      String?
+  linkedin    String?
+  otherLink   String?
+  otherLinkLabel String?
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model CV {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  fileName    String
+  fileUrl     String
+  fileSize    Int
+  mimeType    String
+  uploadedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("cvs")
+}
+
+model GitHubProject {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  description   String?
+  url           String
+  repositoryUrl String
+  language      String?
+  stars         Int      @default(0)
+  forks         Int      @default(0)
+  isPublic      Boolean  @default(true)
+  syncedAt      DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("github_projects")
+}
+
+model UpworkProject {
+  id            String   @id @default(cuid())
+  userId        String
+  title         String
+  description   String?
+  clientName    String?
+  startDate     DateTime?
+  endDate       DateTime?
+  status        String   @default("active") // active, completed, cancelled
+  hourlyRate    Float?
+  totalEarnings Float?
+  url           String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("upwork_projects")
+}
+
+model Experience {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  company     String
+  location    String?
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("experiences")
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  userId      String
+  jobTitle    String
+  company     String
+  location    String?
+  status      String   @default("applied") // applied, interview, offer, rejected, withdrawn
+  appliedDate DateTime @default(now())
+  notes       String?
+  jobUrl      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("applications")
+}
+
+model PortfolioItem {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  type        String   // project, experience, achievement, etc.
+  imageUrl    String?
+  url         String?
+  tags        String[] @default([])
+  isPublished Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("portfolio_items")
+}
+

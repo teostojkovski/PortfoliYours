@@ -1,0 +1,75 @@
+/* Auth Pages Styles */
+
+.authContainer {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.logoContainer {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  height: 2rem;
+  width: auto;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+}
+
+.authContent {
+  width: 100%;
+  max-width: 28rem;
+  margin-top: 4rem;
+}
+
+.authHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.authTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+  font-family: var(--font-outfit);
+}
+
+.authSubtitle {
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  font-family: var(--font-jakarta);
+}
+
+@media (max-width: 768px) {
+  .logoContainer {
+    top: 1.5rem;
+  }
+  
+  .logo {
+    height: 1.75rem;
+  }
+  
+  .authContent {
+    margin-top: 3rem;
+  }
+  
+  .authTitle {
+    font-size: 1.75rem;
+  }
+}
+
