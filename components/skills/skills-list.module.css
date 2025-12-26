@@ -1,0 +1,149 @@
+/* Skills List Styles */
+
+.skillsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.categoryCard {
+  padding: 1.5rem;
+}
+
+.categoryTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 1.5rem 0;
+  font-family: var(--font-outfit);
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.skillsTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-family: var(--font-jakarta);
+  border-bottom: 1px solid var(--border);
+}
+
+.skillRow {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s ease;
+}
+
+.skillRow:hover {
+  background: var(--muted);
+  margin: 0 -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.skillRow:last-child {
+  border-bottom: none;
+}
+
+.colName {
+  font-weight: 500;
+  color: var(--foreground);
+  font-family: var(--font-jakarta);
+}
+
+.skillName {
+  font-size: 0.9375rem;
+}
+
+.colLevel {
+  font-family: var(--font-jakarta);
+}
+
+.stars {
+  color: #fbbf24;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+.colYears,
+.colProjects {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+}
+
+.colStatus {
+  font-size: 0.875rem;
+  font-family: var(--font-jakarta);
+}
+
+.statusVerified {
+  color: #10b981;
+}
+
+.statusClaimed {
+  color: #f59e0b;
+}
+
+@media (max-width: 768px) {
+  .tableHeader,
+  .skillRow {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .tableHeader {
+    display: none;
+  }
+  
+  .skillRow {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
+  
+  .colName::before {
+    content: 'Skill: ';
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+  
+  .colLevel::before {
+    content: 'Level: ';
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+  
+  .colYears::before {
+    content: 'Years: ';
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+  
+  .colProjects::before {
+    content: 'Projects: ';
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+  
+  .colStatus::before {
+    content: 'Status: ';
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+}
+

@@ -63,7 +63,7 @@ export default function Home() {
             <p className={styles.subtext}>
               Showcase your projects, experiences, and achievements in one beautiful, 
               professional portfolio. Manage everything from GitHub projects to job 
-              applications—all in one place.
+              applications, all in one place.
             </p>
           </div>
 

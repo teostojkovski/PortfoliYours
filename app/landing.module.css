@@ -170,14 +170,14 @@
   display: grid;
   width: 100%;
   max-width: 90rem;
-  grid-template-columns: 1fr;
+  grid-template-columns: 2fr 1fr;
   align-items: center;
   gap: 3rem;
 }
 
 @media (min-width: 1024px) {
   .contentGrid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
   }
 }
 
@@ -186,6 +186,7 @@
   flex-direction: column;
   gap: 1.5rem;
   text-align: left;
+  margin-left: 50px;
 }
 
 .heading {
@@ -203,7 +204,7 @@
 
 @media (min-width: 1024px) {
   .heading {
-    font-size: 4.5rem;
+    font-size: 3.5rem;
   }
 }
 
@@ -215,7 +216,7 @@
 
 @media (min-width: 640px) {
   .subtext {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
   }
 }
 
