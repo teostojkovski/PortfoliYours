@@ -1,0 +1,164 @@
+/* Experience Timeline Styles */
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.yearGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.yearTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+  font-family: var(--font-outfit);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.experienceCard {
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.experienceCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.experienceHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.experienceTitle {
+  flex: 1;
+}
+
+.role {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-outfit);
+}
+
+.companyInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+}
+
+.company {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.separator {
+  color: var(--muted-foreground);
+}
+
+.employmentType,
+.location {
+  color: var(--muted-foreground);
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+  white-space: nowrap;
+}
+
+.presentBadge {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-jakarta);
+}
+
+.dates {
+  font-weight: 500;
+}
+
+.bullets {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bullets li {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--foreground);
+  font-family: var(--font-jakarta);
+  padding-left: 1rem;
+  position: relative;
+}
+
+.bullets li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.linkedProjects {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+}
+
+.linkedProjectsLabel {
+  font-weight: 600;
+  color: var(--foreground);
+  margin-right: 0.5rem;
+}
+
+.linkedProjectsList {
+  color: var(--muted-foreground);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+}
+
+@media (max-width: 768px) {
+  .experienceHeader {
+    flex-direction: column;
+  }
+  
+  .dateRange {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+

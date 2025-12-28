@@ -1,17 +1,22 @@
 /**
  * Experience Page
  * Route: /dashboard/experience
- * Manage career history and work experience
+ * Manage professional experience timeline
  */
 
-export default function ExperiencePage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Experience</h1>
-      <p className="text-muted-foreground">
-        Experience management will be implemented here
-      </p>
-    </div>
-  )
-}
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { getExperiencesByUserId } from '@/lib/services/experience'
+import { ExperiencePageClient } from '@/components/experience/experience-page-client'
 
+export default async function ExperiencePage() {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.id) {
+    return <div>Unauthorized</div>
+  }
+
+  const experiences = await getExperiencesByUserId(session.user.id)
+
+  return <ExperiencePageClient experiences={experiences} />
+}

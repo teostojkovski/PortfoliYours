@@ -8,7 +8,7 @@
 import { useState } from 'react'
 import { SkillsList } from './skills-list'
 import { SkillForm } from './skill-form'
-import styles from '../dashboard/skills/skills.module.css'
+import styles from '@/app/dashboard/skills/skills.module.css'
 
 interface Skill {
   id: string

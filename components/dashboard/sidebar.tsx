@@ -8,6 +8,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 import {
   LayoutDashboard,
   User,
@@ -25,21 +27,53 @@ import { ROUTES } from '@/constants/routes'
 import { useSidebar } from './sidebar-context'
 import styles from './sidebar.module.css'
 
-const navItems = [
+const baseNavItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: ROUTES.DASHBOARD },
   { icon: User, label: 'Profile', href: '/dashboard/profile' },
   { icon: FolderKanban, label: 'Projects', href: '/dashboard/projects' },
   { icon: Code, label: 'Skills', href: '/dashboard/skills' },
   { icon: Briefcase, label: 'Experience', href: ROUTES.EXPERIENCES },
-  { icon: FileText, label: 'CVs', href: ROUTES.CV },
+  { icon: FileText, label: 'Documents', href: ROUTES.CV },
   { icon: Send, label: 'Applications', href: ROUTES.APPLICATIONS },
-  { icon: Eye, label: 'Public Profile', href: '/dashboard/public-profile' },
   { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
 ]
 
 export function DashboardSidebar() {
   const pathname = usePathname()
   const { isCollapsed, toggleSidebar } = useSidebar()
+  const { data: session } = useSession()
+  const [publicProfileEnabled, setPublicProfileEnabled] = useState(false)
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      // Check if public profile is enabled
+      const checkPublicProfile = () => {
+        fetch('/api/public-profile')
+          .then(res => res.json())
+          .then(data => {
+            if (data.publicProfile?.enabled) {
+              setPublicProfileEnabled(true)
+            } else {
+              setPublicProfileEnabled(false)
+            }
+          })
+          .catch(() => {
+            setPublicProfileEnabled(false)
+          })
+      }
+
+      // Check immediately and whenever pathname changes
+      // This ensures the tab appears when they enable it in settings and navigate back
+      checkPublicProfile()
+    }
+  }, [session, pathname])
+
+  // Build nav items dynamically based on public profile status
+  const navItems = [
+    ...baseNavItems.slice(0, 7), // All items before Settings
+    ...(publicProfileEnabled ? [{ icon: Eye, label: 'Public Profile', href: '/dashboard/public-profile' }] : []),
+    baseNavItems[7], // Settings always last
+  ]
 
   return (
     <aside className={`${styles.sidebar} ${isCollapsed ? styles.sidebarCollapsed : ''}`}>
@@ -96,4 +130,3 @@ export function DashboardSidebar() {
     </aside>
   )
 }
-

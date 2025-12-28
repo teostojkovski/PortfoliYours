@@ -1,0 +1,228 @@
+/* Project Detail View Styles */
+
+.detailView {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--border);
+  gap: 2rem;
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+  font-family: var(--font-outfit);
+}
+
+.visibilityBadge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-jakarta);
+}
+
+.visibilityBadge.public {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(34, 197, 94);
+}
+
+.visibilityBadge.private {
+  background: rgba(156, 163, 175, 0.1);
+  color: rgb(156, 163, 175);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.type {
+  padding: 0.375rem 0.75rem;
+  background: var(--muted);
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  font-family: var(--font-jakarta);
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.actionButton,
+.editButton,
+.deleteButton {
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-family: var(--font-jakarta);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+}
+
+.actionButton {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.actionButton:hover {
+  background: var(--muted);
+  opacity: 0.8;
+}
+
+.editButton {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.editButton:hover {
+  opacity: 0.9;
+}
+
+.deleteButton {
+  background: transparent;
+  color: var(--destructive);
+  border-color: var(--destructive);
+}
+
+.deleteButton:hover {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 1rem 0;
+  font-family: var(--font-outfit);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.description,
+.detailedDescription {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--foreground);
+  margin: 0;
+  font-family: var(--font-jakarta);
+  white-space: pre-wrap;
+}
+
+.detailedDescription {
+  font-size: 0.9375rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tag {
+  padding: 0.5rem 1rem;
+  background: var(--muted);
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  color: var(--foreground);
+  font-family: var(--font-jakarta);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-family: var(--font-jakarta);
+  transition: opacity 0.2s ease;
+}
+
+.link:hover {
+  opacity: 0.9;
+}
+
+.mutedText {
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .detailView {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actionButton,
+  .editButton,
+  .deleteButton {
+    flex: 1;
+    justify-content: center;
+  }
+}
+

@@ -1,0 +1,209 @@
+/* Documents List Styles */
+
+.documentsPage {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.documentsHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 2rem;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-outfit);
+}
+
+.pageDescription {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  font-family: var(--font-jakarta);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filterSelect {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--input);
+  border-radius: 0.5rem;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.9375rem;
+  font-family: var(--font-jakarta);
+  cursor: pointer;
+}
+
+.uploadButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: var(--font-jakarta);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.uploadButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.errorMessage {
+  padding: 1rem;
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-family: var(--font-jakarta);
+  margin-bottom: 2rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+}
+
+.documentsTable {
+  padding: 0;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: var(--muted);
+}
+
+.table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  font-family: var(--font-outfit);
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9375rem;
+  font-family: var(--font-jakarta);
+}
+
+.table tbody tr:hover {
+  background: var(--muted);
+}
+
+.nameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.name {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.notes {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.typeBadge {
+  padding: 0.25rem 0.75rem;
+  background: var(--muted);
+  color: var(--foreground);
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+}
+
+.actionButton:hover {
+  background: var(--muted);
+}
+
+.actionButtonDanger {
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+  color: var(--destructive);
+}
+
+.actionButtonDanger:hover:not(:disabled) {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.actionButtonDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .documentsHeader {
+    flex-direction: column;
+  }
+  
+  .headerActions {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .filterSelect,
+  .uploadButton {
+    width: 100%;
+  }
+  
+  .table {
+    font-size: 0.875rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+

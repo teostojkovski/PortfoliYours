@@ -6,10 +6,8 @@
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { getSkillsGroupedByCategory, getCategoriesByUserId } from '@/lib/services/skills'
-import { SkillsList } from '@/components/skills/skills-list'
+import { getSkillsGroupedByCategory } from '@/lib/services/skills'
 import { SkillsPageClient } from '@/components/skills/skills-page-client'
-import styles from './skills.module.css'
 
 export default async function SkillsPage() {
   const session = await getServerSession(authOptions)

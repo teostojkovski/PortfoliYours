@@ -1,0 +1,59 @@
+/* Experience Page Styles */
+
+.experiencePage {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.experienceHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 2rem;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-outfit);
+}
+
+.pageDescription {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  font-family: var(--font-jakarta);
+}
+
+.addButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: var(--font-jakarta);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.addButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .experienceHeader {
+    flex-direction: column;
+  }
+  
+  .addButton {
+    width: 100%;
+  }
+}
+

@@ -1,0 +1,472 @@
+/* Public Profile Builder Styles */
+
+.builderPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.builderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-outfit);
+}
+
+.pageDescription {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  font-family: var(--font-jakarta);
+}
+
+.previewLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  font-family: var(--font-jakarta);
+  transition: all 0.2s ease;
+}
+
+.previewLink:hover {
+  opacity: 0.9;
+}
+
+.enablePrompt {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+}
+
+.enablePrompt h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 1rem 0;
+  font-family: var(--font-outfit);
+}
+
+.enablePrompt p {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin: 0 0 2rem 0;
+  font-family: var(--font-jakarta);
+}
+
+.sectionCard {
+  padding: 2rem;
+  margin-bottom: 2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-outfit);
+}
+
+.sectionDescription {
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+  margin: 0 0 1.5rem 0;
+  font-family: var(--font-jakarta);
+}
+
+.basicInfo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border);
+}
+
+.avatarPlaceholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 600;
+  font-family: var(--font-outfit);
+}
+
+.avatarHint {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  text-align: center;
+  margin: 0;
+  font-family: var(--font-jakarta);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.infoValue {
+  font-size: 1rem;
+  color: var(--foreground);
+  margin: 0.5rem 0 0 0;
+  font-family: var(--font-jakarta);
+}
+
+.bioSection {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.bioText {
+  font-size: 1rem;
+  color: var(--foreground);
+  line-height: 1.6;
+  margin: 0.5rem 0 0 0;
+  font-family: var(--font-jakarta);
+}
+
+.socialLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--muted);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-family: var(--font-jakarta);
+  transition: all 0.2s ease;
+}
+
+.socialLink:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--accent);
+}
+
+.selectionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.selectableCard {
+  position: relative;
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--card);
+}
+
+.selectableCard:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.selectableCard.selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  background-opacity: 0.1;
+}
+
+.cardCheckbox {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+}
+
+.cardImage {
+  width: 100%;
+  height: 150px;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--muted);
+}
+
+.projectImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+  font-family: var(--font-outfit);
+}
+
+.cardDescription {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  font-family: var(--font-jakarta);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  background: var(--muted);
+  color: var(--foreground);
+  border-radius: 1rem;
+  font-family: var(--font-jakarta);
+}
+
+.experienceList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.experienceItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--card);
+}
+
+.experienceItem:hover {
+  border-color: var(--primary);
+  transform: translateX(4px);
+}
+
+.experienceItem.selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  background-opacity: 0.1;
+}
+
+.experienceCheckbox {
+  margin-top: 0.25rem;
+}
+
+.experienceContent {
+  flex: 1;
+}
+
+.experienceRole {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.25rem 0;
+  font-family: var(--font-outfit);
+}
+
+.experienceCompany {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-jakarta);
+}
+
+.experienceDates {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0 0 0.25rem 0;
+  font-family: var(--font-jakarta);
+}
+
+.experienceLocation {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  font-family: var(--font-jakarta);
+}
+
+.cvList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cvItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--card);
+}
+
+.cvItem:hover {
+  border-color: var(--primary);
+}
+
+.cvItem.selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  background-opacity: 0.1;
+}
+
+.cvRadio {
+  flex-shrink: 0;
+}
+
+.cvContent {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cvName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+  font-family: var(--font-outfit);
+}
+
+.cvDownload {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--muted);
+  color: var(--foreground);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-family: var(--font-jakarta);
+  transition: all 0.2s ease;
+}
+
+.cvDownload:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.emptyState {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted-foreground);
+  font-family: var(--font-jakarta);
+  background: var(--muted);
+  border-radius: 0.5rem;
+}
+
+.errorMessage {
+  padding: 1rem;
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-family: var(--font-jakarta);
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  padding: 1rem;
+  background: #10b981;
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-family: var(--font-jakarta);
+  margin-bottom: 1rem;
+}
+
+.saveActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+  .builderPage {
+    padding: 1rem;
+  }
+
+  .builderHeader {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .basicInfo {
+    grid-template-columns: 1fr;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .selectionGrid {
+    grid-template-columns: 1fr;
+  }
+}
+

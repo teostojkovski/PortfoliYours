@@ -1,17 +1,22 @@
 /**
- * CVs Page
+ * Documents Page
  * Route: /dashboard/cvs
- * Create and manage multiple CV versions with curated content
+ * Upload and manage documents (CVs, cover letters, and other files)
  */
 
-export default function CVsPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">CVs</h1>
-      <p className="text-muted-foreground">
-        CV management will be implemented here
-      </p>
-    </div>
-  )
-}
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { getDocumentsByUserId } from '@/lib/services/document'
+import { DocumentsList } from '@/components/documents/documents-list'
 
+export default async function CVsPage() {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.id) {
+    return <div>Unauthorized</div>
+  }
+
+  const documents = await getDocumentsByUserId(session.user.id)
+
+  return <DocumentsList documents={documents} />
+}

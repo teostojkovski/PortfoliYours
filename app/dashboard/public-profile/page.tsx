@@ -1,17 +1,46 @@
 /**
- * Public Profile Preview Page
+ * Public Profile Builder Page
  * Route: /dashboard/public-profile
- * Preview how your public profile appears to others
+ * Editable page for building and customizing public profile
  */
 
-export default function PublicProfilePage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Public Profile</h1>
-      <p className="text-muted-foreground">
-        Public profile preview will be implemented here
-      </p>
-    </div>
-  )
-}
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { PublicProfileBuilder } from '@/components/public-profile/public-profile-builder'
 
+export default async function PublicProfileBuilderPage() {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.id) {
+    return <div>Unauthorized</div>
+  }
+
+  // Get user data with all related content
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    include: {
+      profile: true,
+      publicProfile: true,
+      portfolioItems: {
+        orderBy: { createdAt: 'desc' },
+      },
+      experiences: {
+        orderBy: { startDate: 'desc' },
+        include: {
+          experienceProjects: true,
+        },
+      },
+      documents: {
+        where: { type: 'CV' },
+        orderBy: { createdAt: 'desc' },
+      },
+    },
+  })
+
+  if (!user) {
+    return <div>User not found</div>
+  }
+
+  return <PublicProfileBuilder user={user} />
+}

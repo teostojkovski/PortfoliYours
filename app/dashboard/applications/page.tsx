@@ -1,17 +1,22 @@
 /**
  * Applications Page
  * Route: /dashboard/applications
- * Track job applications and their status
+ * Track job applications
  */
 
-export default function ApplicationsPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Applications</h1>
-      <p className="text-muted-foreground">
-        Application tracking will be implemented here
-      </p>
-    </div>
-  )
-}
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { getApplicationsByUserId } from '@/lib/services/application'
+import { ApplicationsList } from '@/components/applications/applications-list'
 
+export default async function ApplicationsPage() {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.id) {
+    return <div>Unauthorized</div>
+  }
+
+  const applications = await getApplicationsByUserId(session.user.id)
+
+  return <ApplicationsList applications={applications} />
+}
