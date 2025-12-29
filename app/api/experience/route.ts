@@ -1,8 +1,4 @@
-/**
- * Experience API Route
- * Route: GET, POST /api/experience
- * Handles experience listing and creation
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'

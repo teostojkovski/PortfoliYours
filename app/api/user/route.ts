@@ -1,8 +1,4 @@
-/**
- * User API Route
- * Route: PUT /api/user
- * Updates user account information
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'

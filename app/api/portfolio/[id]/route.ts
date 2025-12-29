@@ -1,8 +1,4 @@
-/**
- * Portfolio/Projects API Route
- * Route: GET, PUT, DELETE /api/portfolio/[id]
- * Handles individual project operations
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
@@ -33,7 +29,13 @@ export async function GET(
       return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ project: portfolioItem }, { status: 200 })
+    const project = {
+      ...portfolioItem,
+      skillIds: portfolioItem.projectSkills?.map((ps: any) => ps.skillId) || [],
+    }
+    delete (project as any).projectSkills
+
+    return NextResponse.json({ project }, { status: 200 })
   } catch (error) {
     console.error('Portfolio fetch error:', error)
     return NextResponse.json(

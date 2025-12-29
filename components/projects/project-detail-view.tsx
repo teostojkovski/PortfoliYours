@@ -1,7 +1,4 @@
-/**
- * Project Detail View Component
- * Displays full project details
- */
+
 
 'use client'
 

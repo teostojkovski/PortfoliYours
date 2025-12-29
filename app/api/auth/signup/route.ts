@@ -1,8 +1,4 @@
-/**
- * User Signup API Route
- * Route: POST /api/auth/signup
- * Handles user registration with email, password, and profile information
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
@@ -22,7 +18,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validatedData = signupSchema.parse(body)
 
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email: validatedData.email },
     })
@@ -34,10 +29,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10)
-
-    // Create user
     const user = await prisma.user.create({
       data: {
         email: validatedData.email,

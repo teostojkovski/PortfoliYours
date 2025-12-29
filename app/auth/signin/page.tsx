@@ -1,8 +1,4 @@
-/**
- * Sign In Page
- * Route: /auth/signin
- * Public page for user authentication
- */
+
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -13,7 +9,7 @@ import styles from '../auth.module.css'
 export default function SignInPage() {
   return (
     <div className={styles.authContainer}>
-      {/* Logo */}
+      {}
       <div className={styles.logoContainer}>
         <Link href="/" className={styles.logoLink}>
           <Image
@@ -28,7 +24,7 @@ export default function SignInPage() {
         </Link>
       </div>
 
-      {/* Auth Content */}
+      {}
       <div className={styles.authContent}>
         <div className={styles.authHeader}>
           <h1 className={styles.authTitle}>Sign In</h1>

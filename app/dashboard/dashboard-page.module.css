@@ -1,4 +1,4 @@
-/* Dashboard Home Page Styles */
+
 
 .dashboardPage {
   max-width: 1400px;
@@ -63,30 +63,59 @@
 
 .quickAccess {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
 }
 
-.quickCard {
+.completionCardLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.completionCard {
   padding: 1.5rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  border: 2px solid var(--border);
 }
 
-.quickCard:hover {
+.completionCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary);
 }
 
-.quickCardTitle {
+.completionCard.completed {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.completionCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.completionCardTitle {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--foreground);
-  margin: 0 0 0.5rem 0;
+  margin: 0;
   font-family: var(--font-outfit);
 }
 
-.quickCardDesc {
+.checkIcon {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.xIcon {
+  color: var(--destructive);
+  flex-shrink: 0;
+}
+
+.completionCardDesc {
   font-size: 0.875rem;
   color: var(--muted-foreground);
   margin: 0;
@@ -144,6 +173,17 @@
   font-family: var(--font-jakarta);
 }
 
+.projectLink {
+  color: var(--primary);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.projectLink:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
 .experienceItem {
   display: flex;
   flex-direction: column;
@@ -192,6 +232,16 @@
   font-size: 0.9375rem;
   color: var(--foreground);
   font-family: var(--font-jakarta);
+}
+
+.suggestionCompleted {
+  background: rgba(16, 185, 129, 0.1);
+  border-left: 3px solid #10b981;
+}
+
+.suggestionPending {
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid #f59e0b;
 }
 
 @media (max-width: 768px) {

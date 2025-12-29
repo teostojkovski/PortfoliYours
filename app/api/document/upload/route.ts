@@ -1,8 +1,4 @@
-/**
- * Document Upload API Route
- * Route: POST /api/document/upload
- * Handles file upload and creates document entry
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
@@ -32,7 +28,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File is required' }, { status: 400 })
     }
 
-    // Validate file type
     const fileType = getFileTypeFromMime(file.type)
     if (!fileType) {
       return NextResponse.json(
@@ -41,7 +36,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file size
     if (!validateFileSize(file.size)) {
       return NextResponse.json(
         { error: 'File size must be less than 10MB' },
@@ -49,10 +43,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate document data
     const documentData = documentSchema.parse({ name, type, notes })
 
-    // Save file to public/uploads/documents
     const uploadsDir = join(process.cwd(), 'public', 'uploads', 'documents')
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
@@ -65,7 +57,6 @@ export async function POST(request: NextRequest) {
 
     await writeFile(filePath, buffer)
 
-    // Create document entry
     const fileUrl = `/uploads/documents/${fileName}`
     const document = await createDocument(session.user.id, {
       ...documentData,

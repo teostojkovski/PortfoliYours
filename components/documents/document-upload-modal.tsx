@@ -1,6 +1,4 @@
-/**
- * Document Upload Modal Component
- */
+
 
 'use client'
 

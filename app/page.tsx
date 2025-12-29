@@ -1,8 +1,4 @@
-/**
- * Landing Page
- * Route: /
- * Public landing page with hero section and call-to-action
- */
+
 
 import Link from "next/link";
 import Image from "next/image";
@@ -11,7 +7,7 @@ import styles from "./landing.module.css";
 export default function Home() {
   return (
     <div className={styles.landingContainer}>
-      {/* Background Image */}
+      {}
       <div className={styles.backgroundWrapper}>
         <Image
           src="/LandingBackground.jpg"
@@ -21,13 +17,13 @@ export default function Home() {
           priority
           quality={100}
         />
-        {/* Overlay for better text readability */}
+        {}
         <div className={styles.overlay} />
       </div>
 
-      {/* Top Navigation */}
+      {}
       <nav className={styles.topNav}>
-        {/* Centered Logo */}
+        {}
           <Link href="/" className={styles.logoLink}>
             <Image
               src="/logo.png"
@@ -40,7 +36,7 @@ export default function Home() {
             />
           </Link>
 
-        {/* Right Side Buttons */}
+        {}
         <div className={styles.navButtons}>
           <Link href="/auth/signin" className={styles.signInButton}>
             Sign In
@@ -52,10 +48,10 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Main Content Section */}
+      {}
       <main className={styles.mainContent}>
         <div className={styles.contentGrid}>
-          {/* Left Side - Text Content */}
+          {}
           <div className={styles.textContent}>
             <h1 className={styles.heading}>
               Build Your Digital Career Portfolio
@@ -67,7 +63,7 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Right Side - MacBook Image */}
+          {}
           <div className={styles.laptopWrapper}>
             <div className={styles.laptopContainer}>
               <Image

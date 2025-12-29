@@ -19,5 +19,5 @@ export const applicationSchema = z.object({
 
 export const applicationUpdateSchema = applicationSchema.extend({
   isArchived: z.boolean().default(false),
-})
+}).partial()
 

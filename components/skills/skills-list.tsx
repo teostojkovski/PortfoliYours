@@ -1,7 +1,4 @@
-/**
- * Skills List Component
- * Displays skills grouped by category
- */
+
 
 'use client'
 
@@ -11,11 +8,12 @@ import styles from './skills-list.module.css'
 interface Skill {
   id: string
   name: string
+  categoryId: string
   level: number
   yearsExperience: number | null
   description: string | null
   lastUsedAt: Date | null
-  projectSkills: Array<{ id: string }>
+  projectSkills: Array<{ id: string; projectId: string }>
   category: {
     id: string
     name: string
@@ -39,13 +37,6 @@ export function SkillsList({ grouped, categories, onEdit }: SkillsListProps) {
     return '★'.repeat(level) + '☆'.repeat(5 - level)
   }
 
-  const getStatusIndicator = (skill: Skill) => {
-    if (skill.projectSkills.length > 0) {
-      return <span className={styles.statusVerified}>🟢 Verified</span>
-    }
-    return <span className={styles.statusClaimed}>🟡 Claimed</span>
-  }
-
   return (
     <div className={styles.skillsList}>
       {categories.map((category) => {
@@ -61,7 +52,6 @@ export function SkillsList({ grouped, categories, onEdit }: SkillsListProps) {
                 <div className={styles.colLevel}>Level</div>
                 <div className={styles.colYears}>Years</div>
                 <div className={styles.colProjects}>Projects</div>
-                <div className={styles.colStatus}>Status</div>
               </div>
               {categorySkills.map((skill) => (
                 <div
@@ -81,9 +71,6 @@ export function SkillsList({ grouped, categories, onEdit }: SkillsListProps) {
                   </div>
                   <div className={styles.colProjects}>
                     {skill.projectSkills.length} project{skill.projectSkills.length !== 1 ? 's' : ''}
-                  </div>
-                  <div className={styles.colStatus}>
-                    {getStatusIndicator(skill)}
                   </div>
                 </div>
               ))}

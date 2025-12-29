@@ -63,12 +63,10 @@ export async function getSkillsGroupedByCategory(userId: string) {
 
   const grouped: Record<string, typeof skills> = {}
 
-  // Initialize all categories
   categories.forEach((cat) => {
     grouped[cat.id] = []
   })
 
-  // Group skills by category
   skills.forEach((skill) => {
     if (!grouped[skill.categoryId]) {
       grouped[skill.categoryId] = []
@@ -82,7 +80,6 @@ export async function getSkillsGroupedByCategory(userId: string) {
 export async function createSkill(userId: string, data: z.infer<typeof skillSchema>) {
   const validatedData = skillSchema.parse(data)
 
-  // Check if skill name already exists for this user
   const existing = await prisma.skill.findUnique({
     where: {
       userId_name: {
@@ -106,13 +103,12 @@ export async function createSkill(userId: string, data: z.infer<typeof skillSche
     },
   })
 
-  // Link projects if provided
   if (projectIds && projectIds.length > 0) {
     await prisma.projectSkill.createMany({
       data: projectIds.map((projectId) => ({
         skillId: skill.id,
         projectId,
-        projectType: 'portfolio', // Default, can be enhanced later
+        projectType: 'portfolio',
       })),
       skipDuplicates: true,
     })
@@ -124,7 +120,6 @@ export async function createSkill(userId: string, data: z.infer<typeof skillSche
 export async function updateSkill(skillId: string, userId: string, data: z.infer<typeof skillSchema>) {
   const validatedData = skillSchema.parse(data)
 
-  // Verify ownership
   const existing = await prisma.skill.findFirst({
     where: { id: skillId, userId },
   })
@@ -133,7 +128,6 @@ export async function updateSkill(skillId: string, userId: string, data: z.infer
     throw new Error('Skill not found')
   }
 
-  // Check name uniqueness if changed
   if (validatedData.name !== existing.name) {
     const nameExists = await prisma.skill.findUnique({
       where: {
@@ -159,14 +153,11 @@ export async function updateSkill(skillId: string, userId: string, data: z.infer
     },
   })
 
-  // Update project links
   if (projectIds !== undefined) {
-    // Remove existing links
     await prisma.projectSkill.deleteMany({
       where: { skillId },
     })
 
-    // Add new links
     if (projectIds.length > 0) {
       await prisma.projectSkill.createMany({
         data: projectIds.map((projectId) => ({
@@ -217,7 +208,6 @@ export async function updateCategory(categoryId: string, userId: string, data: z
 }
 
 export async function deleteCategory(categoryId: string, userId: string) {
-  // Check if category has skills
   const skillsCount = await prisma.skill.count({
     where: { categoryId },
   })

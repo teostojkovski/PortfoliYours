@@ -1,7 +1,4 @@
-/**
- * Experience Timeline Component
- * Displays experiences in chronological order
- */
+
 
 'use client'
 

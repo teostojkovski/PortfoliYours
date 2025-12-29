@@ -1,9 +1,3 @@
-/**
- * Application API Route
- * Route: GET, PUT, DELETE /api/applications/[id]
- * Handles application retrieval, update, and deletion
- */
-
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -13,7 +7,7 @@ import { z } from 'zod'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -22,7 +16,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const application = await getApplicationById(params.id, session.user.id)
+    const { id } = await params
+    const application = await getApplicationById(id, session.user.id)
 
     if (!application) {
       return NextResponse.json({ error: 'Application not found' }, { status: 404 })
@@ -40,7 +35,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -49,8 +44,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
-    const application = await updateApplication(params.id, session.user.id, body)
+    const application = await updateApplication(id, session.user.id, body)
 
     return NextResponse.json({ application }, { status: 200 })
   } catch (error) {
@@ -78,7 +74,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -87,7 +83,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await deleteApplication(params.id, session.user.id)
+    const { id } = await params
+    await deleteApplication(id, session.user.id)
 
     return NextResponse.json({ message: 'Application deleted' }, { status: 200 })
   } catch (error) {

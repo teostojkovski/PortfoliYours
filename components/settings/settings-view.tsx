@@ -1,7 +1,4 @@
-/**
- * Settings View Component
- * Main settings container with navigation
- */
+
 
 'use client'
 
@@ -61,7 +58,6 @@ export function SettingsView({ user }: SettingsViewProps) {
   return (
     <div className={styles.settingsPage}>
       <div className={styles.settingsHeader}>
-        <h1 className={styles.pageTitle}>Settings</h1>
         <p className={styles.pageDescription}>
           Manage your account and preferences
         </p>

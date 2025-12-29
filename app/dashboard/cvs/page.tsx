@@ -1,8 +1,4 @@
-/**
- * Documents Page
- * Route: /dashboard/cvs
- * Upload and manage documents (CVs, cover letters, and other files)
- */
+
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'

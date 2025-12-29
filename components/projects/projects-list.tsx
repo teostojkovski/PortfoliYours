@@ -1,7 +1,4 @@
-/**
- * Projects List Component
- * Displays projects in a table format
- */
+
 
 'use client'
 
@@ -12,9 +9,15 @@ interface Project {
   id: string
   title: string
   description: string | null
+  detailedDescription: string | null
   type: string
+  url: string | null
+  tags: string[]
   isPublished: boolean
+  startDate: Date | null
+  endDate: Date | null
   createdAt: Date
+  updatedAt: Date
 }
 
 interface ProjectsListProps {

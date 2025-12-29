@@ -1,8 +1,4 @@
-/**
- * Profile Page
- * Route: /dashboard/profile
- * Manage user identity, contact info, and social links
- */
+
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -18,7 +14,6 @@ export default async function ProfilePage() {
     return <div>Unauthorized</div>
   }
 
-  // Get user with profile
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     include: { profile: true },
@@ -31,7 +26,6 @@ export default async function ProfilePage() {
   return (
     <div className={styles.profilePage}>
       <div className={styles.profileHeader}>
-        <h1 className={styles.pageTitle}>Profile</h1>
         <p className={styles.pageDescription}>
           Manage your identity and contact information
         </p>

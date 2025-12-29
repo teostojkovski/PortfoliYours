@@ -1,11 +1,7 @@
-/**
- * Documents List Component
- * Displays all uploaded documents with actions
- */
-
 'use client'
 
 import { useState, useTransition } from 'react'
+import { Download, Trash2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import styles from './documents-list.module.css'
 import { DocumentUploadModal } from './document-upload-modal'
@@ -63,14 +59,62 @@ export function DocumentsList({ documents: initialDocuments }: DocumentsListProp
     window.location.reload()
   }
 
-  const handleDownload = (doc: Document) => {
-    // Create a temporary anchor element to trigger download
-    const link = document.createElement('a')
-    link.href = doc.fileUrl
-    link.download = doc.name
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const handleDownload = async (doc: Document) => {
+    try {
+      const urlParts = doc.fileUrl.split('/')
+      const fileName = urlParts[urlParts.length - 1]
+      
+      if (!fileName) {
+        throw new Error('Invalid file URL')
+      }
+      
+      const response = await fetch(`/api/documents/download/${encodeURIComponent(fileName)}`)
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        throw new Error(errorData.error || 'Failed to download file')
+      }
+      
+      const blob = await response.blob()
+      
+      const contentDisposition = response.headers.get('Content-Disposition')
+      let downloadFileName = doc.name
+      
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
+        if (filenameMatch && filenameMatch[1]) {
+          downloadFileName = filenameMatch[1]
+        }
+      }
+      
+      if (!downloadFileName || downloadFileName === doc.name) {
+        const parts = fileName.split('-')
+        if (parts.length >= 3) {
+          const originalPart = parts.slice(2).join('-')
+          if (originalPart && originalPart.includes('.')) {
+            downloadFileName = originalPart
+          }
+        }
+      }
+      
+      if (!downloadFileName || !downloadFileName.includes('.')) {
+        const extension = doc.fileType || 'pdf'
+        downloadFileName = `${doc.name}.${extension}`
+      }
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = downloadFileName
+      link.style.display = 'none'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Download error:', err)
+      const errorMessage = err instanceof Error ? err.message : 'Failed to download file'
+      alert(`Failed to download file: ${errorMessage}. Please check if the file exists.`)
+    }
   }
 
   const handleDelete = async (documentId: string) => {
@@ -102,7 +146,6 @@ export function DocumentsList({ documents: initialDocuments }: DocumentsListProp
     <div className={styles.documentsPage}>
       <div className={styles.documentsHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Documents</h1>
           <p className={styles.pageDescription}>
             Upload and manage your documents (CVs, cover letters, and other files)
           </p>
@@ -169,7 +212,7 @@ export function DocumentsList({ documents: initialDocuments }: DocumentsListProp
                         onClick={() => handleDownload(document)}
                         title="Download"
                       >
-                        ⬇
+                        <Download size={16} />
                       </button>
                       <button
                         className={styles.actionButtonDanger}
@@ -177,7 +220,7 @@ export function DocumentsList({ documents: initialDocuments }: DocumentsListProp
                         disabled={isPending}
                         title="Delete"
                       >
-                        🗑
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>

@@ -1,15 +1,12 @@
-/**
- * Applications List Component
- * Displays all applications in a table
- */
-
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect, useRef } from 'react'
 import { Card } from '@/components/ui/card'
-import { useRouter } from 'next/navigation'
+import { Eye, Edit, Archive } from 'lucide-react'
 import styles from './applications-list.module.css'
 import { ApplicationFormModal } from './application-form-modal'
+import { ApplicationPreviewModal } from './application-preview-modal'
+import { ArchivesModal } from './archives-modal'
 
 interface ApplicationDocument {
   id: string
@@ -26,6 +23,10 @@ interface Application {
   status: string
   appliedAt: Date | null
   link: string | null
+  notes: string | null
+  recruiterName: string | null
+  recruiterEmail: string | null
+  followUpAt: Date | null
   isArchived: boolean
   documents: ApplicationDocument[]
   createdAt: Date
@@ -36,9 +37,11 @@ interface ApplicationsListProps {
 }
 
 export function ApplicationsList({ applications: initialApplications }: ApplicationsListProps) {
-  const router = useRouter()
   const [applications, setApplications] = useState(initialApplications)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
+  const [isArchivesModalOpen, setIsArchivesModalOpen] = useState(false)
+  const [previewingApplication, setPreviewingApplication] = useState<Application | null>(null)
   const [editingApplication, setEditingApplication] = useState<Application | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -92,8 +95,15 @@ export function ApplicationsList({ applications: initialApplications }: Applicat
     setIsModalOpen(true)
   }
 
-  const handleView = (applicationId: string) => {
-    router.push(`/dashboard/applications/${applicationId}`)
+  const handleView = (application: Application) => {
+    setPreviewingApplication(application)
+    setIsPreviewModalOpen(true)
+  }
+
+  const handleUnarchive = (applicationId: string) => {
+    setApplications(applications.map((app) =>
+      app.id === applicationId ? { ...app, isArchived: false } : app
+    ))
   }
 
   const handleArchive = async (applicationId: string, archived: boolean) => {
@@ -125,18 +135,87 @@ export function ApplicationsList({ applications: initialApplications }: Applicat
     window.location.reload()
   }
 
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState<string | null>(null)
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null)
+  const statusButtonRefs = useRef<Record<string, HTMLButtonElement>>({})
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      const isClickInside = Object.values(statusButtonRefs.current).some(
+        (ref) => ref && ref.contains(target)
+      )
+      if (!isClickInside) {
+        setStatusDropdownOpen(null)
+        setDropdownPosition(null)
+      }
+    }
+
+    if (statusDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [statusDropdownOpen])
+
+  const handleStatusChange = async (applicationId: string, newStatus: string) => {
+    setError(null)
+    setStatusDropdownOpen(null)
+    startTransition(async () => {
+      try {
+        const response = await fetch(`/api/applications/${applicationId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus }),
+        })
+
+        if (!response.ok) {
+          const data = await response.json()
+          setError(data.error || 'Failed to update status')
+          return
+        }
+
+        setApplications(applications.map((app) =>
+          app.id === applicationId ? { ...app, status: newStatus } : app
+        ))
+      } catch (err) {
+        setError('An error occurred. Please try again.')
+      }
+    })
+  }
+
+  const statusOptions = [
+    { value: 'draft', label: 'Draft' },
+    { value: 'applied', label: 'Applied' },
+    { value: 'interview', label: 'Interview' },
+    { value: 'offer', label: 'Offer' },
+    { value: 'rejected', label: 'Rejected' },
+    { value: 'withdrawn', label: 'Withdrawn' },
+  ]
+
   return (
     <div className={styles.applicationsPage}>
       <div className={styles.applicationsHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Applications</h1>
           <p className={styles.pageDescription}>
             Track jobs, documents, and progress
           </p>
         </div>
-        <button className={styles.newButton} onClick={handleCreate}>
-          + New Application
-        </button>
+        <div className={styles.headerActions}>
+          <button 
+            className={styles.archiveButton} 
+            onClick={() => setIsArchivesModalOpen(true)}
+            title="View archived applications"
+          >
+            <Archive size={18} />
+            Archives ({applications.filter(app => app.isArchived).length})
+          </button>
+          <button className={styles.newButton} onClick={handleCreate}>
+            + New Application
+          </button>
+        </div>
       </div>
 
       <div className={styles.filters}>
@@ -200,9 +279,54 @@ export function ApplicationsList({ applications: initialApplications }: Applicat
                     </td>
                     <td>{application.role}</td>
                     <td>
-                      <span className={`${styles.statusBadge} ${getStatusClass(application.status)}`}>
-                        {getStatusBadge(application.status)}
-                      </span>
+                      <div className={styles.statusContainer}>
+                        <button
+                          ref={(el) => {
+                            if (el) statusButtonRefs.current[application.id] = el
+                          }}
+                          className={`${styles.statusBadge} ${styles.statusBadgeClickable} ${getStatusClass(application.status)}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            const button = statusButtonRefs.current[application.id]
+                            if (button) {
+                              const rect = button.getBoundingClientRect()
+                              setDropdownPosition({
+                                top: rect.bottom + 4,
+                                left: rect.left,
+                              })
+                            }
+                            setStatusDropdownOpen(statusDropdownOpen === application.id ? null : application.id)
+                          }}
+                          disabled={isPending}
+                          title="Click to change status"
+                        >
+                          {getStatusBadge(application.status)}
+                        </button>
+                        {statusDropdownOpen === application.id && dropdownPosition && (
+                          <div 
+                            className={styles.statusDropdown}
+                            style={{
+                              top: `${dropdownPosition.top}px`,
+                              left: `${dropdownPosition.left}px`,
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {statusOptions.map((option) => (
+                              <button
+                                key={option.value}
+                                type="button"
+                                className={`${styles.statusOption} ${application.status === option.value ? styles.statusOptionActive : ''}`}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleStatusChange(application.id, option.value)
+                                }}
+                              >
+                                {option.label}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td>
                       {hasCv ? (
@@ -216,17 +340,17 @@ export function ApplicationsList({ applications: initialApplications }: Applicat
                       <div className={styles.actions}>
                         <button
                           className={styles.actionButton}
-                          onClick={() => handleView(application.id)}
-                          title="View"
+                          onClick={() => handleView(application)}
+                          title="Preview"
                         >
-                          👁
+                          <Eye size={16} />
                         </button>
                         <button
                           className={styles.actionButton}
                           onClick={() => handleEdit(application)}
                           title="Edit"
                         >
-                          ✏
+                          <Edit size={16} />
                         </button>
                         <button
                           className={styles.actionButton}
@@ -234,7 +358,7 @@ export function ApplicationsList({ applications: initialApplications }: Applicat
                           disabled={isPending}
                           title={application.isArchived ? 'Unarchive' : 'Archive'}
                         >
-                          📦
+                          <Archive size={16} />
                         </button>
                       </div>
                     </td>
@@ -254,6 +378,24 @@ export function ApplicationsList({ applications: initialApplications }: Applicat
             setEditingApplication(null)
           }}
           onSuccess={handleSuccess}
+        />
+      )}
+
+      {isPreviewModalOpen && previewingApplication && (
+        <ApplicationPreviewModal
+          application={previewingApplication}
+          onClose={() => {
+            setIsPreviewModalOpen(false)
+            setPreviewingApplication(null)
+          }}
+        />
+      )}
+
+      {isArchivesModalOpen && (
+        <ArchivesModal
+          applications={applications}
+          onClose={() => setIsArchivesModalOpen(false)}
+          onUnarchive={handleUnarchive}
         />
       )}
     </div>

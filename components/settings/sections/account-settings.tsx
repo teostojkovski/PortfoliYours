@@ -1,7 +1,4 @@
-/**
- * Account Settings Section
- * Basic identity and account information
- */
+
 
 'use client'
 
@@ -53,6 +50,8 @@ export function AccountSettings({ user }: AccountSettingsProps) {
 
         setSuccess(true)
         setTimeout(() => setSuccess(false), 3000)
+
+        window.dispatchEvent(new CustomEvent('userNameUpdated', { detail: { fullName: formData.fullName } }))
       } catch (err) {
         setError('An error occurred. Please try again.')
       }

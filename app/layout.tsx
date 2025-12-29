@@ -1,8 +1,4 @@
-/**
- * Root Layout
- * Wraps all pages in the application
- * Provides fonts, global styles, and metadata
- */
+
 
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";

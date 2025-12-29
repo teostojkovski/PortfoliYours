@@ -1,4 +1,4 @@
-/* Landing Page Styles */
+
 
 .landingContainer {
   position: relative;
@@ -23,7 +23,7 @@
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-/* Top Navigation */
+
 .topNav {
   position: fixed;
   top: 0;

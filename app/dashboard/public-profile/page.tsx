@@ -1,8 +1,4 @@
-/**
- * Public Profile Builder Page
- * Route: /dashboard/public-profile
- * Editable page for building and customizing public profile
- */
+
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -16,7 +12,6 @@ export default async function PublicProfileBuilderPage() {
     return <div>Unauthorized</div>
   }
 
-  // Get user data with all related content
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     include: {

@@ -1,9 +1,3 @@
-/**
- * Application Archive API Route
- * Route: PUT /api/applications/[id]/archive
- * Archives or unarchives an application
- */
-
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -11,7 +5,7 @@ import { archiveApplication } from '@/lib/services/application'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -20,10 +14,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const archived = body.archived === true
 
-    const application = await archiveApplication(params.id, session.user.id, archived)
+    const application = await archiveApplication(id, session.user.id, archived)
 
     return NextResponse.json({ application }, { status: 200 })
   } catch (error) {

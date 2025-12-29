@@ -1,8 +1,4 @@
-/**
- * Public Profile API Route
- * Route: GET, PUT /api/public-profile
- * Handles public profile settings
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'

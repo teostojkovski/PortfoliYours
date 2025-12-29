@@ -1,7 +1,4 @@
-/**
- * Security Settings Section
- * Password management
- */
+
 
 'use client'
 
@@ -136,7 +133,6 @@ export function SecuritySettings() {
         <h2 className={styles.sectionTitle}>Sign Out</h2>
         <div className={styles.sessionSection}>
           <div>
-            <h3 className={styles.sessionTitle}>Current Session</h3>
             <p className={styles.sessionInfo}>
               Sign out of your account on this device
             </p>

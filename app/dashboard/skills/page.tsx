@@ -1,8 +1,4 @@
-/**
- * Skills Page
- * Route: /dashboard/skills
- * Manage skills with categories and project linking
- */
+
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -16,26 +12,14 @@ export default async function SkillsPage() {
     return <div>Unauthorized</div>
   }
 
-  const { grouped, categories, skills } = await getSkillsGroupedByCategory(session.user.id)
-
-  // Calculate warnings
-  const skillsWithoutProjects = skills.filter(
-    (skill) => skill.projectSkills.length === 0
-  ).length
-
-  const oldSkills = skills.filter((skill) => {
-    if (!skill.lastUsedAt) return false
-    const threeYearsAgo = new Date()
-    threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3)
-    return skill.lastUsedAt < threeYearsAgo
-  }).length
+  const { grouped, categories } = await getSkillsGroupedByCategory(session.user.id)
 
   return (
     <SkillsPageClient
       grouped={grouped}
       categories={categories}
-      skillsWithoutProjects={skillsWithoutProjects}
-      oldSkills={oldSkills}
+      skillsWithoutProjects={0}
+      oldSkills={0}
     />
   )
 }

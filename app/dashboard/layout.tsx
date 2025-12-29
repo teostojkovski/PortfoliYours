@@ -1,7 +1,4 @@
-/**
- * Dashboard Layout
- * Wraps all dashboard pages with sidebar navigation and header
- */
+
 
 'use client'
 

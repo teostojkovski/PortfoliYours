@@ -1,7 +1,4 @@
-/**
- * Projects Page Client Component
- * Manages state and modals for projects
- */
+
 
 'use client'
 
@@ -44,7 +41,7 @@ export function ProjectsPageClient({ initialProjects }: ProjectsPageClientProps)
       if (project) {
         setEditingProject(project)
         setIsModalOpen(true)
-        // Clear the edit param from URL
+
         router.replace('/dashboard/projects', { scroll: false })
       }
     }
@@ -63,7 +60,7 @@ export function ProjectsPageClient({ initialProjects }: ProjectsPageClientProps)
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setEditingProject(null)
-    // Clear edit param from URL if present
+
     if (searchParams.get('edit')) {
       router.replace('/dashboard/projects', { scroll: false })
     }
@@ -103,7 +100,6 @@ export function ProjectsPageClient({ initialProjects }: ProjectsPageClientProps)
     <div className={styles.projectsPage}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Projects</h1>
           <p className={styles.subtitle}>Curate and present your work</p>
         </div>
         <button onClick={handleAddProject} className={styles.addButton}>

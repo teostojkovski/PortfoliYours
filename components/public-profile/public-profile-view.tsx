@@ -1,7 +1,4 @@
-/**
- * Public Profile View Component
- * Read-only public profile display
- */
+
 
 'use client'
 
@@ -99,7 +96,6 @@ export function PublicProfileView({ publicProfile }: PublicProfileViewProps) {
     return '★'.repeat(level) + '☆'.repeat(5 - level)
   }
 
-  // Group skills by category
   const skillsByCategory: Record<string, typeof user.skills> = {}
   user.skills.forEach((skill) => {
     const categoryName = skill.category.name
@@ -109,14 +105,13 @@ export function PublicProfileView({ publicProfile }: PublicProfileViewProps) {
     skillsByCategory[categoryName].push(skill)
   })
 
-  // Get selected CV
   const selectedCv = selectedCvId
     ? user.documents.find((doc) => doc.id === selectedCvId)
     : null
 
   return (
     <div className={styles.publicProfile}>
-      {/* Header */}
+      {}
       {showProfile && (
         <div className={styles.header}>
           {profile?.avatarUrl && (
@@ -173,7 +168,7 @@ export function PublicProfileView({ publicProfile }: PublicProfileViewProps) {
         </div>
       )}
 
-      {/* About */}
+      {}
       {showProfile && profile?.bio && (
         <Card className={styles.section}>
           <h2 className={styles.sectionTitle}>About</h2>
@@ -181,7 +176,7 @@ export function PublicProfileView({ publicProfile }: PublicProfileViewProps) {
         </Card>
       )}
 
-      {/* Skills */}
+      {}
       {showSkills && Object.keys(skillsByCategory).length > 0 && (
         <Card className={styles.section}>
           <h2 className={styles.sectionTitle}>Skills</h2>
@@ -203,7 +198,7 @@ export function PublicProfileView({ publicProfile }: PublicProfileViewProps) {
         </Card>
       )}
 
-      {/* Experience */}
+      {}
       {showExperience && user.experiences.length > 0 && (
         <Card className={styles.section}>
           <h2 className={styles.sectionTitle}>Experience</h2>
@@ -235,7 +230,7 @@ export function PublicProfileView({ publicProfile }: PublicProfileViewProps) {
         </Card>
       )}
 
-      {/* Projects */}
+      {}
       {showProjects && user.portfolioItems.length > 0 && (
         <Card className={styles.section}>
           <h2 className={styles.sectionTitle}>Projects</h2>
@@ -280,7 +275,7 @@ export function PublicProfileView({ publicProfile }: PublicProfileViewProps) {
         </Card>
       )}
 
-      {/* CV Download */}
+      {}
       {allowCvRequest && selectedCv && (
         <Card className={styles.section}>
           <h2 className={styles.sectionTitle}>Resume</h2>
@@ -300,7 +295,7 @@ export function PublicProfileView({ publicProfile }: PublicProfileViewProps) {
         </Card>
       )}
 
-      {/* Contact */}
+      {}
       {showContact && (
         <Card className={styles.section}>
           <h2 className={styles.sectionTitle}>Contact</h2>

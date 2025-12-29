@@ -40,11 +40,11 @@ export async function createApplication(
     coverLetterFile?: { url: string; name: string; type: string; size: number }
   }
 ) {
-  const validatedData = applicationSchema.parse(data)
+  const { cvFile, coverLetterFile, ...dataToValidate } = data
+  const validatedData = applicationSchema.parse(dataToValidate)
 
-  const { cvDocumentId, coverLetterDocumentId, saveCvToDocuments, saveCoverLetterToDocuments, cvFile, coverLetterFile, ...applicationData } = validatedData
+  const { cvDocumentId, coverLetterDocumentId, saveCvToDocuments, saveCoverLetterToDocuments, ...applicationData } = validatedData
 
-  // Create application
   const application = await prisma.application.create({
     data: {
       ...applicationData,
@@ -58,9 +58,7 @@ export async function createApplication(
     },
   })
 
-  // Handle CV document
   if (cvDocumentId) {
-    // Link existing document
     const document = await prisma.document.findFirst({
       where: { id: cvDocumentId, userId },
     })
@@ -79,7 +77,6 @@ export async function createApplication(
       })
     }
   } else if (cvFile) {
-    // Create application document
     const appDoc = await prisma.applicationDocument.create({
       data: {
         applicationId: application.id,
@@ -92,7 +89,6 @@ export async function createApplication(
       },
     })
 
-    // If user wants to save to documents, create a Document entry
     if (saveCvToDocuments) {
       const document = await prisma.document.create({
         data: {
@@ -105,7 +101,6 @@ export async function createApplication(
         },
       })
 
-      // Update application document to link to the saved document
       await prisma.applicationDocument.update({
         where: { id: appDoc.id },
         data: { documentId: document.id },
@@ -113,7 +108,6 @@ export async function createApplication(
     }
   }
 
-  // Handle cover letter document (same logic)
   if (coverLetterDocumentId) {
     const document = await prisma.document.findFirst({
       where: { id: coverLetterDocumentId, userId },
@@ -170,11 +164,14 @@ export async function createApplication(
 export async function updateApplication(
   applicationId: string,
   userId: string,
-  data: z.infer<typeof applicationUpdateSchema>
+  data: z.infer<typeof applicationUpdateSchema> & {
+    cvFile?: { url: string; name: string; type: string; size: number }
+    coverLetterFile?: { url: string; name: string; type: string; size: number }
+  }
 ) {
-  const validatedData = applicationUpdateSchema.parse(data)
+  const { cvFile, coverLetterFile, ...dataToValidate } = data
+  const validatedData = applicationUpdateSchema.parse(dataToValidate)
 
-  // Verify ownership
   const existing = await prisma.application.findFirst({
     where: { id: applicationId, userId },
   })
@@ -183,24 +180,30 @@ export async function updateApplication(
     throw new Error('Application not found')
   }
 
-  const { cvDocumentId, coverLetterDocumentId, saveCvToDocuments, saveCoverLetterToDocuments, cvFile, coverLetterFile, ...applicationData } = validatedData
+  const { cvDocumentId, coverLetterDocumentId, saveCvToDocuments, saveCoverLetterToDocuments, ...applicationData } = validatedData
 
-  // Update application
+  const updateData: any = {}
+  
+  if (applicationData.company !== undefined) updateData.company = applicationData.company
+  if (applicationData.role !== undefined) updateData.role = applicationData.role
+  if (applicationData.location !== undefined) updateData.location = applicationData.location || null
+  if (applicationData.status !== undefined) updateData.status = applicationData.status
+  if (applicationData.appliedAt !== undefined) updateData.appliedAt = applicationData.appliedAt || null
+  if (applicationData.link !== undefined) updateData.link = applicationData.link || null
+  if (applicationData.notes !== undefined) updateData.notes = applicationData.notes || null
+  if (applicationData.recruiterName !== undefined) updateData.recruiterName = applicationData.recruiterName || null
+  if (applicationData.recruiterEmail !== undefined) updateData.recruiterEmail = applicationData.recruiterEmail || null
+  if (applicationData.followUpAt !== undefined) updateData.followUpAt = applicationData.followUpAt || null
+  if (applicationData.isArchived !== undefined) updateData.isArchived = applicationData.isArchived
+
+  if (Object.keys(updateData).length === 0) {
+    throw new Error('No fields to update')
+  }
+
   const application = await prisma.application.update({
     where: { id: applicationId },
-    data: {
-      ...applicationData,
-      appliedAt: validatedData.appliedAt || null,
-      link: validatedData.link || null,
-      notes: validatedData.notes || null,
-      recruiterName: validatedData.recruiterName || null,
-      recruiterEmail: validatedData.recruiterEmail || null,
-      followUpAt: validatedData.followUpAt || null,
-    },
+    data: updateData,
   })
-
-  // Update documents if provided (similar logic to create)
-  // For simplicity, we'll keep existing documents and only update if explicitly changed
 
   return application
 }

@@ -23,6 +23,11 @@ export async function getExperienceById(experienceId: string, userId: string) {
     where: { id: experienceId, userId },
     include: {
       experienceProjects: true,
+      experienceSkills: {
+        select: {
+          skillId: true,
+        },
+      },
     },
   })
 }
@@ -30,7 +35,7 @@ export async function getExperienceById(experienceId: string, userId: string) {
 export async function createExperience(userId: string, data: z.infer<typeof experienceSchema>) {
   const validatedData = experienceSchema.parse(data)
 
-  const { projectIds, ...experienceData } = validatedData
+  const { projectIds, skillIds, ...experienceData } = validatedData
 
   const experience = await prisma.experience.create({
     data: {
@@ -40,7 +45,6 @@ export async function createExperience(userId: string, data: z.infer<typeof expe
     },
   })
 
-  // Link projects if provided
   if (projectIds && projectIds.length > 0) {
     await prisma.experienceProject.createMany({
       data: projectIds.map((projectId) => ({
@@ -52,13 +56,41 @@ export async function createExperience(userId: string, data: z.infer<typeof expe
     })
   }
 
+  if (skillIds && skillIds.length > 0) {
+    const userSkills = await prisma.skill.findMany({
+      where: {
+        userId,
+        id: { in: skillIds },
+      },
+    })
+
+    if (userSkills.length !== skillIds.length) {
+      throw new Error('One or more skills not found')
+    }
+
+    try {
+      await prisma.experienceSkill.createMany({
+        data: skillIds.map((skillId) => ({
+          experienceId: experience.id,
+          skillId,
+        })),
+        skipDuplicates: true,
+      })
+    } catch (error: any) {
+      if (error?.message?.includes('does not exist')) {
+        console.error('ExperienceSkill table not found. Please run: npx prisma db push')
+        throw new Error('Database table missing. Please contact support.')
+      }
+      throw error
+    }
+  }
+
   return experience
 }
 
 export async function updateExperience(experienceId: string, userId: string, data: z.infer<typeof experienceSchema>) {
   const validatedData = experienceSchema.parse(data)
 
-  // Verify ownership
   const existing = await prisma.experience.findFirst({
     where: { id: experienceId, userId },
   })
@@ -67,7 +99,7 @@ export async function updateExperience(experienceId: string, userId: string, dat
     throw new Error('Experience not found')
   }
 
-  const { projectIds, ...experienceData } = validatedData
+  const { projectIds, skillIds, ...experienceData } = validatedData
 
   const experience = await prisma.experience.update({
     where: { id: experienceId },
@@ -77,14 +109,11 @@ export async function updateExperience(experienceId: string, userId: string, dat
     },
   })
 
-  // Update project links
   if (projectIds !== undefined) {
-    // Remove existing links
     await prisma.experienceProject.deleteMany({
       where: { experienceId },
     })
 
-    // Add new links
     if (projectIds.length > 0) {
       await prisma.experienceProject.createMany({
         data: projectIds.map((projectId) => ({
@@ -94,6 +123,41 @@ export async function updateExperience(experienceId: string, userId: string, dat
         })),
         skipDuplicates: true,
       })
+    }
+  }
+
+  if (skillIds !== undefined) {
+    await prisma.experienceSkill.deleteMany({
+      where: { experienceId },
+    })
+
+    if (skillIds.length > 0) {
+      const userSkills = await prisma.skill.findMany({
+        where: {
+          userId,
+          id: { in: skillIds },
+        },
+      })
+
+      if (userSkills.length !== skillIds.length) {
+        throw new Error('One or more skills not found')
+      }
+
+      try {
+        await prisma.experienceSkill.createMany({
+          data: skillIds.map((skillId) => ({
+            experienceId: experience.id,
+            skillId,
+          })),
+          skipDuplicates: true,
+        })
+      } catch (error: any) {
+        if (error?.message?.includes('does not exist')) {
+          console.error('ExperienceSkill table not found. Please run: npx prisma db push')
+          throw new Error('Database table missing. Please contact support.')
+        }
+        throw error
+      }
     }
   }
 

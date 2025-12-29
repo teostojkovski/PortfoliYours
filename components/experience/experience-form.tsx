@@ -1,15 +1,11 @@
-/**
- * Experience Form Component
- * Modal form for adding/editing experiences
- */
-
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { DatePicker } from '@/components/ui/date-picker'
 import styles from './experience-form.module.css'
 
 interface Experience {
@@ -22,6 +18,15 @@ interface Experience {
   endDate: Date | null
   bullets: string[]
   experienceProjects: Array<{ id: string; projectId: string }>
+  experienceSkills?: Array<{ skillId: string }>
+}
+
+interface Skill {
+  id: string
+  name: string
+  category: {
+    name: string
+  }
 }
 
 interface ExperienceFormProps {
@@ -33,6 +38,20 @@ interface ExperienceFormProps {
 export function ExperienceForm({ experience, onClose, onSuccess }: ExperienceFormProps) {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const [availableSkills, setAvailableSkills] = useState<Skill[]>([])
+  const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([])
+
+  useEffect(() => {
+    fetch('/api/skills')
+      .then(res => res.json())
+      .then(data => {
+        if (data.skills) {
+          setAvailableSkills(data.skills)
+        }
+      })
+      .catch(() => {
+      })
+  }, [])
 
   const formatDateForInput = (date: Date | null) => {
     if (!date) return ''
@@ -52,7 +71,16 @@ export function ExperienceForm({ experience, onClose, onSuccess }: ExperienceFor
     isPresent: !experience?.endDate,
     bullets: experience?.bullets || [''],
     projectIds: experience?.experienceProjects.map((ep) => ep.projectId) || [],
+    skillIds: experience?.experienceSkills?.map((es) => es.skillId) || [],
   })
+
+  useEffect(() => {
+    if (experience) {
+      setSelectedSkillIds(experience.experienceSkills?.map((es) => es.skillId) || [])
+    } else {
+      setSelectedSkillIds([])
+    }
+  }, [experience])
 
   const handleAddBullet = () => {
     setFormData({ ...formData, bullets: [...formData.bullets, ''] })
@@ -73,11 +101,18 @@ export function ExperienceForm({ experience, onClose, onSuccess }: ExperienceFor
     setFormData({ ...formData, bullets: newBullets })
   }
 
+  const toggleSkill = (skillId: string) => {
+    setSelectedSkillIds(prev =>
+      prev.includes(skillId)
+        ? prev.filter(id => id !== skillId)
+        : [...prev, skillId]
+    )
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    // Filter out empty bullets
     const validBullets = formData.bullets.filter((b) => b.trim().length > 0)
 
     if (validBullets.length === 0) {
@@ -91,6 +126,7 @@ export function ExperienceForm({ experience, onClose, onSuccess }: ExperienceFor
           ...formData,
           bullets: validBullets,
           endDate: formData.isPresent ? null : formData.endDate,
+          skillIds: selectedSkillIds,
         }
 
         const url = experience ? `/api/experience/${experience.id}` : '/api/experience'
@@ -181,7 +217,7 @@ export function ExperienceForm({ experience, onClose, onSuccess }: ExperienceFor
 
             <div className={styles.formField}>
               <Label htmlFor="startDate">Start date</Label>
-              <Input
+              <DatePicker
                 id="startDate"
                 type="month"
                 value={formData.startDate}
@@ -193,7 +229,7 @@ export function ExperienceForm({ experience, onClose, onSuccess }: ExperienceFor
             <div className={styles.formField}>
               <Label htmlFor="endDate">End date</Label>
               <div className={styles.endDateGroup}>
-                <Input
+                <DatePicker
                   id="endDate"
                   type="month"
                   value={formData.endDate}
@@ -209,6 +245,29 @@ export function ExperienceForm({ experience, onClose, onSuccess }: ExperienceFor
                   <span>Present</span>
                 </label>
               </div>
+            </div>
+          </div>
+
+          <div className={styles.formFieldFull}>
+            <Label>Skills</Label>
+            <div className={styles.skillsContainer}>
+              {availableSkills.length === 0 ? (
+                <p className={styles.hint}>No skills available. Add skills in the Skills section first.</p>
+              ) : (
+                <div className={styles.skillsGrid}>
+                  {availableSkills.map((skill) => (
+                    <label key={skill.id} className={styles.skillCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={selectedSkillIds.includes(skill.id)}
+                        onChange={() => toggleSkill(skill.id)}
+                      />
+                      <span>{skill.name}</span>
+                      <span className={styles.skillCategory}>{skill.category.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

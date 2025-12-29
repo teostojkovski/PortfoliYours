@@ -1,8 +1,4 @@
-/**
- * Documents API Route
- * Route: GET, POST /api/documents
- * Handles document listing and creation
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
@@ -52,7 +48,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File is required' }, { status: 400 })
     }
 
-    // Validate file type
     const fileType = getFileTypeFromMime(file.type)
     if (!fileType) {
       return NextResponse.json(
@@ -61,8 +56,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024 // 10MB
+    const maxSize = 10 * 1024 * 1024
     if (file.size > maxSize) {
       return NextResponse.json(
         { error: 'File size must be less than 10MB' },
@@ -70,8 +64,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // For now, we'll store the file URL as a placeholder
-    // In production, you'd upload to S3/R2/Supabase Storage and get a URL
+
     const fileUrl = `/uploads/${session.user.id}/${Date.now()}-${file.name}`
 
     const document = await createDocument(session.user.id, {

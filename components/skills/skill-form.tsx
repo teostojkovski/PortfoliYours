@@ -1,7 +1,4 @@
-/**
- * Skill Form Component
- * Modal form for adding/editing skills
- */
+
 
 'use client'
 
@@ -10,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { DatePicker } from '@/components/ui/date-picker'
 import styles from './skill-form.module.css'
 
 interface Skill {
@@ -167,9 +165,8 @@ export function SkillForm({ skill, categories, onClose, onSuccess }: SkillFormPr
 
           <div className={styles.formField}>
             <Label htmlFor="lastUsedAt">Last used (optional)</Label>
-            <Input
+            <DatePicker
               id="lastUsedAt"
-              type="date"
               value={formData.lastUsedAt}
               onChange={(e) => setFormData({ ...formData, lastUsedAt: e.target.value })}
             />

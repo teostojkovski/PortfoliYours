@@ -1,8 +1,4 @@
-/**
- * Sign Up Page
- * Route: /auth/signup
- * Public page for user registration
- */
+
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -13,7 +9,7 @@ import styles from '../auth.module.css'
 export default function SignUpPage() {
   return (
     <div className={styles.authContainer}>
-      {/* Logo */}
+      {}
       <div className={styles.logoContainer}>
         <Link href="/" className={styles.logoLink}>
           <Image
@@ -28,7 +24,7 @@ export default function SignUpPage() {
         </Link>
       </div>
 
-      {/* Auth Content */}
+      {}
       <div className={styles.authContent}>
         <div className={styles.authHeader}>
           <h1 className={styles.authTitle}>Create Account</h1>

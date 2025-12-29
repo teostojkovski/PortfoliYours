@@ -1,7 +1,4 @@
-/**
- * Skills Page Client Component
- * Handles modal state and interactions
- */
+
 
 'use client'
 
@@ -65,7 +62,7 @@ export function SkillsPageClient({
 
   const handleSuccess = () => {
     setRefreshKey((prev) => prev + 1)
-    // In a real app, you'd refetch data here or use React Query
+
     window.location.reload()
   }
 
@@ -73,7 +70,6 @@ export function SkillsPageClient({
     <div className={styles.skillsPage}>
       <div className={styles.skillsHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Skills</h1>
           <p className={styles.pageDescription}>
             Skills are reusable across projects & CVs
           </p>
@@ -82,22 +78,6 @@ export function SkillsPageClient({
           + Add Skill
         </button>
       </div>
-
-      {/* Warnings */}
-      {(skillsWithoutProjects > 0 || oldSkills > 0) && (
-        <div className={styles.warningsSection}>
-          {skillsWithoutProjects > 0 && (
-            <div className={styles.warning}>
-              ⚠️ {skillsWithoutProjects} skill{skillsWithoutProjects > 1 ? 's' : ''} have no linked projects
-            </div>
-          )}
-          {oldSkills > 0 && (
-            <div className={styles.warning}>
-              ⚠️ {oldSkills} skill{oldSkills > 1 ? 's' : ''} have not been used in 3+ years
-            </div>
-          )}
-        </div>
-      )}
 
       <SkillsList grouped={grouped} categories={categories} onEdit={handleEditClick} />
 

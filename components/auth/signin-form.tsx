@@ -1,8 +1,4 @@
-/**
- * Sign In Form Component
- * Handles user authentication
- * Located at: /auth/signin
- */
+
 
 'use client'
 

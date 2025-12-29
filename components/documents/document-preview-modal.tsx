@@ -1,6 +1,4 @@
-/**
- * Document Preview Modal Component
- */
+
 
 'use client'
 

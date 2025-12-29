@@ -1,8 +1,4 @@
-/**
- * Header Component
- * Main navigation header for the application
- * Used in authenticated dashboard pages
- */
+
 
 import Link from 'next/link'
 import Image from 'next/image'

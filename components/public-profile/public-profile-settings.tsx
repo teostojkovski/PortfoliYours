@@ -1,7 +1,4 @@
-/**
- * Public Profile Settings Component
- * Configure public profile visibility and settings
- */
+
 
 'use client'
 
@@ -105,8 +102,29 @@ export function PublicProfileSettings({ publicProfile: initialPublicProfile }: P
           return
         }
 
+
+        try {
+          const profileResponse = await fetch('/api/profile')
+          const profileData = await profileResponse.json()
+          
+          if (profileData.profile) {
+            await fetch('/api/profile', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...profileData.profile,
+                isPublic: formData.showProfile,
+              }),
+            })
+          }
+        } catch (err) {
+
+        }
+
         setSuccess(true)
         setTimeout(() => setSuccess(false), 3000)
+
+        window.dispatchEvent(new CustomEvent('publicProfileUpdated'))
       } catch (err) {
         setError('An error occurred. Please try again.')
       }
@@ -237,15 +255,6 @@ export function PublicProfileSettings({ publicProfile: initialPublicProfile }: P
                   onChange={(e) => setFormData({ ...formData, showProjects: e.target.checked })}
                 />
                 <span>Projects</span>
-              </label>
-
-              <label className={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  checked={formData.showContact}
-                  onChange={(e) => setFormData({ ...formData, showContact: e.target.checked })}
-                />
-                <span>Contact</span>
               </label>
             </div>
           </Card>

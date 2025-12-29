@@ -1,7 +1,4 @@
-/**
- * Experience Page Client Component
- * Handles modal state and interactions
- */
+
 
 'use client'
 
@@ -51,7 +48,7 @@ export function ExperiencePageClient({ experiences: initialExperiences }: Experi
   }
 
   const handleSuccess = () => {
-    // Reload to get fresh data
+
     window.location.reload()
   }
 
@@ -59,7 +56,6 @@ export function ExperiencePageClient({ experiences: initialExperiences }: Experi
     <div className={styles.experiencePage}>
       <div className={styles.experienceHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Experience</h1>
           <p className={styles.pageDescription}>
             Your professional history, ordered by time
           </p>

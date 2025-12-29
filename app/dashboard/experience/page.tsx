@@ -1,8 +1,4 @@
-/**
- * Experience Page
- * Route: /dashboard/experience
- * Manage professional experience timeline
- */
+
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'

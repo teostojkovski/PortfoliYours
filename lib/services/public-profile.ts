@@ -4,7 +4,6 @@ import { z } from 'zod'
 
 export async function getPublicProfileBySlug(slug: string) {
   try {
-    // Use raw SQL to bypass Prisma client corruption issues
     const publicProfileResult = await prisma.$queryRaw<Array<{
       id: string
       slug: string
@@ -39,7 +38,6 @@ export async function getPublicProfileBySlug(slug: string) {
     const publicProfile = publicProfileResult[0]
     const userId = publicProfile.userId
 
-    // Get user with raw SQL
     const userResult = await prisma.$queryRaw<Array<{
       id: string
       fullName: string
@@ -57,7 +55,6 @@ export async function getPublicProfileBySlug(slug: string) {
 
     const user = userResult[0]
 
-    // Get profile with raw SQL
     const profileResult = await prisma.$queryRaw<Array<{
       id: string
       title: string | null
@@ -79,7 +76,6 @@ export async function getPublicProfileBySlug(slug: string) {
 
     const profile = profileResult && profileResult.length > 0 ? profileResult[0] : null
 
-    // Get skills with categories (show all skills that have linked projects)
     const skillsResult = await prisma.$queryRaw<Array<{
       id: string
       name: string
@@ -94,7 +90,6 @@ export async function getPublicProfileBySlug(slug: string) {
       ORDER BY sc."order" ASC, s.name ASC
     `.catch(() => [])
 
-    // Group skills by category
     const skillsByCategory: Record<string, Array<{
       id: string
       name: string
@@ -112,11 +107,10 @@ export async function getPublicProfileBySlug(slug: string) {
         name: skill.name,
         level: skill.level,
         category: { name: skill.categoryName },
-        projectSkills: [{ id: 'placeholder' }], // Placeholder for compatibility
+        projectSkills: [{ id: 'placeholder' }],
       })
     }
 
-    // Get experiences
     const experiencesResult = await prisma.$queryRaw<Array<{
       id: string
       company: string
@@ -132,7 +126,6 @@ export async function getPublicProfileBySlug(slug: string) {
       ORDER BY "startDate" DESC
     `.catch(() => [])
 
-    // Filter experiences based on selected IDs
     let filteredExperiences = experiencesResult || []
     if (publicProfile.selectedExperienceIds && publicProfile.selectedExperienceIds.length > 0) {
       filteredExperiences = filteredExperiences.filter((exp: any) =>
@@ -140,7 +133,6 @@ export async function getPublicProfileBySlug(slug: string) {
       )
     }
 
-    // Get documents (CVs)
     const documentsResult = await prisma.$queryRaw<Array<{
       id: string
       name: string
@@ -152,7 +144,6 @@ export async function getPublicProfileBySlug(slug: string) {
       ORDER BY "createdAt" DESC
     `.catch(() => [])
 
-    // Get portfolio items (projects) - only get explicitly selected ones
     let portfolioResult: Array<{
       id: string
       title: string
@@ -163,8 +154,14 @@ export async function getPublicProfileBySlug(slug: string) {
     }> = []
 
     if (publicProfile.selectedProjectIds && publicProfile.selectedProjectIds.length > 0) {
-      // Get only selected projects (regardless of published status since user explicitly selected them)
-      portfolioResult = await prisma.$queryRaw`
+      portfolioResult = await prisma.$queryRaw<Array<{
+        id: string
+        title: string
+        description: string | null
+        url: string | null
+        tags: string[]
+        imageUrl: string | null
+      }>>`
         SELECT id, title, description, url, tags, "imageUrl"
         FROM portfolio_items
         WHERE "userId" = ${userId} AND id = ANY(${publicProfile.selectedProjectIds}::text[])
@@ -174,12 +171,10 @@ export async function getPublicProfileBySlug(slug: string) {
 
     const filteredPortfolioItems = portfolioResult || []
 
-    // Get selected CV
     const selectedCv = publicProfile.selectedCvId
       ? documentsResult.find((doc: any) => doc.id === publicProfile.selectedCvId) || null
       : null
 
-    // Convert skills object to array format expected by component
     const skillsArray = Object.values(skillsByCategory).flat()
 
     return {
@@ -228,7 +223,6 @@ export async function createOrUpdatePublicProfile(
 ) {
   const validatedData = publicProfileSchema.parse(data)
 
-  // Check if slug is already taken by another user
   const existingSlug = await prisma.publicProfile.findUnique({
     where: { slug: validatedData.slug },
   })
@@ -237,7 +231,6 @@ export async function createOrUpdatePublicProfile(
     throw new Error('This username is already taken')
   }
 
-  // Get or create public profile
   const existing = await prisma.publicProfile.findUnique({
     where: { userId },
   })

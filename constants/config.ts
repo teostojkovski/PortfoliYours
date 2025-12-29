@@ -1,6 +1,4 @@
-/**
- * Application configuration constants
- */
+
 
 export const APP_CONFIG = {
   name: 'Portfoliyours',
@@ -9,7 +7,7 @@ export const APP_CONFIG = {
 } as const
 
 export const FILE_UPLOAD_CONFIG = {
-  maxSize: 5 * 1024 * 1024, // 5MB
+  maxSize: 5 * 1024 * 1024,
   allowedTypes: {
     cv: ['application/pdf'],
     images: ['image/jpeg', 'image/png', 'image/webp'],

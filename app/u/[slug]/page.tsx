@@ -1,8 +1,4 @@
-/**
- * Public Profile Page
- * Route: /u/[slug]
- * Read-only public profile view
- */
+
 
 import { notFound } from 'next/navigation'
 import { getPublicProfileBySlug } from '@/lib/services/public-profile'

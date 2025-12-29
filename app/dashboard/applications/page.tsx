@@ -1,8 +1,4 @@
-/**
- * Applications Page
- * Route: /dashboard/applications
- * Track job applications
- */
+
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'

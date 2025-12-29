@@ -1,8 +1,4 @@
-/**
- * Skills API Route
- * Route: GET, POST /api/skills
- * Handles skill listing and creation
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'

@@ -19,10 +19,8 @@ export async function getProfileByUserId(userId: string) {
 }
 
 export async function updateProfile(userId: string, data: z.infer<typeof profileUpdateSchema>) {
-  // Validate input
   const validatedData = profileUpdateSchema.parse(data)
 
-  // Clean empty strings to null
   const cleanedData = Object.fromEntries(
     Object.entries(validatedData).map(([key, value]) => [
       key,
@@ -30,7 +28,6 @@ export async function updateProfile(userId: string, data: z.infer<typeof profile
     ])
   ) as typeof validatedData
 
-  // Upsert profile (create if doesn't exist, update if exists)
   return await prisma.profile.upsert({
     where: { userId },
     update: cleanedData,
@@ -42,9 +39,13 @@ export async function updateProfile(userId: string, data: z.infer<typeof profile
 }
 
 export async function updateAvatar(userId: string, avatarUrl: string | null) {
-  return await prisma.profile.update({
+  return await prisma.profile.upsert({
     where: { userId },
-    data: { avatarUrl },
+    update: { avatarUrl },
+    create: {
+      userId,
+      avatarUrl,
+    },
   })
 }
 

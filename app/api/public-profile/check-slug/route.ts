@@ -1,8 +1,4 @@
-/**
- * Check Slug Availability API Route
- * Route: GET /api/public-profile/check-slug?slug=...
- * Checks if a slug is available
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'

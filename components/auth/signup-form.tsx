@@ -1,9 +1,3 @@
-/**
- * Sign Up Form Component
- * Handles user registration
- * Located at: /auth/signup
- */
-
 'use client'
 
 import { useState } from 'react'
@@ -11,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { DatePicker } from '@/components/ui/date-picker'
 import { ROUTES } from '@/constants/routes'
 
 export function SignUpForm() {
@@ -91,9 +86,8 @@ export function SignUpForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="dateOfBirth">Date of Birth</Label>
-        <Input
+        <DatePicker
           id="dateOfBirth"
-          type="date"
           value={formData.dateOfBirth}
           onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
           required

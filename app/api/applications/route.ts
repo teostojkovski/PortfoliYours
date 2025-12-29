@@ -1,8 +1,4 @@
-/**
- * Applications API Route
- * Route: GET, POST /api/applications
- * Handles application listing and creation
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
@@ -44,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData()
-    const data = {
+    const rawData = {
       company: formData.get('company') as string,
       role: formData.get('role') as string,
       location: formData.get('location') as string | null,
@@ -64,7 +60,6 @@ export async function POST(request: NextRequest) {
     const cvFile = formData.get('cvFile') as File | null
     const coverLetterFile = formData.get('coverLetterFile') as File | null
 
-    // Handle file uploads (simplified - in production, upload to storage first)
     let cvFileData = undefined
     let coverLetterFileData = undefined
 
@@ -86,8 +81,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const validatedData = applicationSchema.parse(rawData)
+
     const application = await createApplication(session.user.id, {
-      ...data,
+      ...validatedData,
       cvFile: cvFileData,
       coverLetterFile: coverLetterFileData,
     })

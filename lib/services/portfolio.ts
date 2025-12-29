@@ -13,9 +13,28 @@ export async function getPortfolioItemsByUserId(userId: string, type?: string) {
 }
 
 export async function getPortfolioItemById(portfolioItemId: string, userId: string) {
-  return await prisma.portfolioItem.findFirst({
+  const portfolioItem = await prisma.portfolioItem.findFirst({
     where: { id: portfolioItemId, userId },
   })
+
+  if (!portfolioItem) {
+    return null
+  }
+
+  const projectSkills = await prisma.projectSkill.findMany({
+    where: {
+      projectId: portfolioItemId,
+      projectType: 'portfolio',
+    },
+    select: {
+      skillId: true,
+    },
+  })
+
+  return {
+    ...portfolioItem,
+    projectSkills,
+  }
 }
 
 export async function createPortfolioItem(
@@ -23,22 +42,45 @@ export async function createPortfolioItem(
   data: z.infer<typeof portfolioItemSchema>
 ) {
   const validatedData = portfolioItemSchema.parse(data)
+  const { skillIds, ...portfolioData } = validatedData
 
   const portfolioItem = await prisma.portfolioItem.create({
     data: {
-      title: validatedData.title,
-      description: validatedData.description || null,
-      detailedDescription: validatedData.detailedDescription || null,
-      type: validatedData.type,
-      url: validatedData.url || null,
-      tags: validatedData.tags || [],
-      isPublished: validatedData.isPublished,
-      startDate: validatedData.startDate ? new Date(validatedData.startDate) : null,
-      endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
-      order: validatedData.order || 0,
+      title: portfolioData.title,
+      description: portfolioData.description || null,
+      detailedDescription: portfolioData.detailedDescription || null,
+      type: portfolioData.type,
+      url: portfolioData.url || null,
+      tags: portfolioData.tags || [],
+      isPublished: portfolioData.isPublished,
+      startDate: portfolioData.startDate ? new Date(portfolioData.startDate) : null,
+      endDate: portfolioData.endDate ? new Date(portfolioData.endDate) : null,
+      order: portfolioData.order || 0,
       userId,
     },
   })
+
+  if (skillIds && skillIds.length > 0) {
+    const userSkills = await prisma.skill.findMany({
+      where: {
+        userId,
+        id: { in: skillIds },
+      },
+    })
+
+    if (userSkills.length !== skillIds.length) {
+      throw new Error('One or more skills not found')
+    }
+
+    await prisma.projectSkill.createMany({
+      data: skillIds.map((skillId) => ({
+        skillId,
+        projectId: portfolioItem.id,
+        projectType: 'portfolio',
+      })),
+      skipDuplicates: true,
+    })
+  }
 
   return portfolioItem
 }
@@ -49,8 +91,8 @@ export async function updatePortfolioItem(
   data: z.infer<typeof portfolioItemUpdateSchema>
 ) {
   const validatedData = portfolioItemUpdateSchema.parse(data)
+  const { skillIds, ...portfolioData } = validatedData
 
-  // Verify ownership
   const existing = await prisma.portfolioItem.findFirst({
     where: { id: portfolioItemId, userId },
   })
@@ -62,26 +104,57 @@ export async function updatePortfolioItem(
   const portfolioItem = await prisma.portfolioItem.update({
     where: { id: portfolioItemId },
     data: {
-      ...(validatedData.title !== undefined && { title: validatedData.title }),
-      ...(validatedData.description !== undefined && {
-        description: validatedData.description || null,
+      ...(portfolioData.title !== undefined && { title: portfolioData.title }),
+      ...(portfolioData.description !== undefined && {
+        description: portfolioData.description || null,
       }),
-      ...(validatedData.detailedDescription !== undefined && {
-        detailedDescription: validatedData.detailedDescription || null,
+      ...(portfolioData.detailedDescription !== undefined && {
+        detailedDescription: portfolioData.detailedDescription || null,
       }),
-      ...(validatedData.type !== undefined && { type: validatedData.type }),
-      ...(validatedData.url !== undefined && { url: validatedData.url || null }),
-      ...(validatedData.tags !== undefined && { tags: validatedData.tags }),
-      ...(validatedData.isPublished !== undefined && { isPublished: validatedData.isPublished }),
-      ...(validatedData.startDate !== undefined && {
-        startDate: validatedData.startDate ? new Date(validatedData.startDate) : null,
+      ...(portfolioData.type !== undefined && { type: portfolioData.type }),
+      ...(portfolioData.url !== undefined && { url: portfolioData.url || null }),
+      ...(portfolioData.tags !== undefined && { tags: portfolioData.tags }),
+      ...(portfolioData.isPublished !== undefined && { isPublished: portfolioData.isPublished }),
+      ...(portfolioData.startDate !== undefined && {
+        startDate: portfolioData.startDate ? new Date(portfolioData.startDate) : null,
       }),
-      ...(validatedData.endDate !== undefined && {
-        endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
+      ...(portfolioData.endDate !== undefined && {
+        endDate: portfolioData.endDate ? new Date(portfolioData.endDate) : null,
       }),
-      ...(validatedData.order !== undefined && { order: validatedData.order }),
+      ...(portfolioData.order !== undefined && { order: portfolioData.order }),
     },
   })
+
+  if (skillIds !== undefined) {
+    await prisma.projectSkill.deleteMany({
+      where: {
+        projectId: portfolioItemId,
+        projectType: 'portfolio',
+      },
+    })
+
+    if (skillIds.length > 0) {
+      const userSkills = await prisma.skill.findMany({
+        where: {
+          userId,
+          id: { in: skillIds },
+        },
+      })
+
+      if (userSkills.length !== skillIds.length) {
+        throw new Error('One or more skills not found')
+      }
+
+      await prisma.projectSkill.createMany({
+        data: skillIds.map((skillId) => ({
+          skillId,
+          projectId: portfolioItemId,
+          projectType: 'portfolio',
+        })),
+        skipDuplicates: true,
+      })
+    }
+  }
 
   return portfolioItem
 }

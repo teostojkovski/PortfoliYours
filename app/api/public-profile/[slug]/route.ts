@@ -1,20 +1,15 @@
-/**
- * Public Profile API Route
- * Route: GET /api/public-profile/[slug]
- * Fetches public profile data by slug
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = params
+    const { slug } = await params
 
-    // Step 1: Get the public profile with basic user info (simple query)
     const publicProfile = await prisma.publicProfile.findUnique({
       where: { slug },
       select: {
@@ -41,7 +36,6 @@ export async function GET(
 
     const userId = publicProfile.userId
 
-    // Step 2: Fetch user and profile separately
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -55,9 +49,8 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Step 3: Fetch related data separately (simple queries)
     const [skillsData, experiencesData, documentsData, portfolioItemsData] = await Promise.all([
-      // Skills with projects
+
       prisma.skill.findMany({
         where: {
           userId,
@@ -83,7 +76,7 @@ export async function GET(
           { name: 'asc' },
         ],
       }).catch(() => []),
-      // Experiences
+
       prisma.experience.findMany({
         where: { userId },
         select: {
@@ -102,7 +95,7 @@ export async function GET(
         },
         orderBy: { startDate: 'desc' },
       }).catch(() => []),
-      // Documents (CVs)
+
       prisma.document.findMany({
         where: {
           userId,
@@ -115,7 +108,7 @@ export async function GET(
         },
         orderBy: { createdAt: 'desc' },
       }).catch(() => []),
-      // Portfolio items
+
       prisma.portfolioItem.findMany({
         where: {
           userId,
@@ -133,7 +126,6 @@ export async function GET(
       }).catch(() => []),
     ])
 
-    // Step 4: Filter based on selected IDs
     let filteredPortfolioItems = portfolioItemsData
     if (publicProfile.selectedProjectIds && publicProfile.selectedProjectIds.length > 0) {
       filteredPortfolioItems = portfolioItemsData.filter((item) =>
@@ -148,7 +140,6 @@ export async function GET(
       )
     }
 
-    // Step 5: Combine everything
     const result = {
       ...publicProfile,
       user: {

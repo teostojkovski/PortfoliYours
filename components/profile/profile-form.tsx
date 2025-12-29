@@ -1,11 +1,9 @@
-/**
- * Profile Form Component
- * Client component for profile editing
- */
+
 
 'use client'
 
 import { useState, useTransition } from 'react'
+import Image from 'next/image'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -39,6 +37,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState(user.profile?.avatarUrl || null)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
 
   const [formData, setFormData] = useState({
     title: user.profile?.title || '',
@@ -50,8 +50,40 @@ export function ProfileForm({ user }: ProfileFormProps) {
     linkedin: user.profile?.linkedin || '',
     otherLink: user.profile?.otherLink || '',
     otherLabel: user.profile?.otherLabel || '',
-    isPublic: user.profile?.isPublic ?? false,
   })
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingAvatar(true)
+    setError(null)
+
+    try {
+      const uploadData = new FormData()
+      uploadData.append('file', file)
+
+      const response = await fetch('/api/profile/avatar', {
+        method: 'POST',
+        body: uploadData,
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to upload avatar')
+        return
+      }
+
+      setAvatarUrl(data.avatarUrl)
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+    } catch (err) {
+      setError('An error occurred while uploading avatar')
+    } finally {
+      setIsUploadingAvatar(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -73,6 +105,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
           return
         }
 
+
         setSuccess(true)
         setTimeout(() => setSuccess(false), 3000)
       } catch (err) {
@@ -83,60 +116,86 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className={styles.profileForm}>
-      {/* Basic Information */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Basic Information</h2>
-        <div className={styles.formGrid}>
-          <div className={styles.formField}>
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input
-              id="fullName"
-              value={user.fullName}
-              disabled
-              className={styles.readOnlyInput}
-            />
-            <p className={styles.fieldHint}>Name cannot be changed here</p>
+        <div className={styles.basicInfoLayout}>
+          <div className={styles.avatarSection}>
+            {avatarUrl ? (
+              <Image
+                src={avatarUrl}
+                alt="Profile picture"
+                width={120}
+                height={120}
+                className={styles.avatarPreview}
+              />
+            ) : (
+              <div className={styles.avatarPlaceholder}>
+                {user.fullName.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className={styles.avatarUpload}>
+              <input
+                id="avatar"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleAvatarUpload}
+                className={styles.fileInput}
+                disabled={isUploadingAvatar}
+              />
+              <Label htmlFor="avatar" className={styles.avatarLabel}>
+                {isUploadingAvatar ? 'Uploading...' : 'Upload Photo'}
+              </Label>
+              <p className={styles.fieldHint}>JPG, PNG, WEBP (max 5MB)</p>
+            </div>
           </div>
 
-          <div className={styles.formField}>
-            <Label htmlFor="title">Professional Title</Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g. Frontend Developer"
-              maxLength={100}
-            />
-          </div>
-
-          <div className={styles.formField}>
-            <Label htmlFor="location">Location</Label>
-            <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              placeholder="City / Country"
-              maxLength={200}
-            />
-          </div>
-
-          <div className={styles.formFieldFull}>
-            <Label htmlFor="bio">Short Bio</Label>
-            <textarea
-              id="bio"
-              value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              placeholder="A brief summary about yourself..."
-              maxLength={500}
-              className={styles.textarea}
-              rows={4}
-            />
-            <p className={styles.charCount}>{formData.bio.length}/500</p>
+          <div className={styles.infoSection}>
+            <div className={styles.infoDisplay}>
+              <div className={styles.infoRow}>
+                <Label>Full Name</Label>
+                <p className={styles.infoValue}>{user.fullName}</p>
+                <p className={styles.fieldHint}>Name cannot be changed here</p>
+              </div>
+              <div className={styles.infoRow}>
+                <Label htmlFor="title">Professional Title</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="e.g. Frontend Developer"
+                  maxLength={100}
+                />
+              </div>
+              <div className={styles.infoRow}>
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="City / Country"
+                  maxLength={200}
+                />
+              </div>
+              <div className={styles.infoRow}>
+                <Label htmlFor="bio">Short Bio</Label>
+                <textarea
+                  id="bio"
+                  value={formData.bio}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  placeholder="A brief summary about yourself..."
+                  maxLength={500}
+                  className={styles.textarea}
+                  rows={4}
+                />
+                <p className={styles.charCount}>{formData.bio.length}/500</p>
+              </div>
+            </div>
           </div>
         </div>
       </Card>
 
-      {/* Contact Information */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Contact Information</h2>
         <div className={styles.formGrid}>
@@ -166,7 +225,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         </div>
       </Card>
 
-      {/* Social & External Links */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Social & External Links</h2>
         <div className={styles.formGrid}>
@@ -227,31 +286,17 @@ export function ProfileForm({ user }: ProfileFormProps) {
         </div>
       </Card>
 
-      {/* Profile Visibility */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Profile Visibility</h2>
-        <div className={styles.visibilitySection}>
-          <div className={styles.visibilityInfo}>
-            <Label htmlFor="isPublic" className={styles.visibilityLabel}>
-              Make profile public
-            </Label>
-            <p className={styles.visibilityDescription}>
-              Allow others to view your public profile at /u/[username]
-            </p>
-          </div>
-          <label className={styles.toggleSwitch}>
-            <input
-              type="checkbox"
-              checked={formData.isPublic}
-              onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-              className={styles.toggleInput}
-            />
-            <span className={styles.toggleSlider}></span>
-          </label>
+        <div className={styles.visibilityMessage}>
+          <p className={styles.visibilityDescription}>
+            To make your profile public, go to <a href="/dashboard/settings" className={styles.settingsLink}>Settings</a> → Public Profile section.
+          </p>
         </div>
       </Card>
 
-      {/* Error/Success Messages */}
+      {}
       {error && (
         <div className={styles.errorMessage}>
           {error}
@@ -264,7 +309,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         </div>
       )}
 
-      {/* Submit Button */}
+      {}
       <div className={styles.formActions}>
         <Button type="submit" disabled={isPending} className={styles.saveButton}>
           {isPending ? 'Saving...' : 'Save Changes'}

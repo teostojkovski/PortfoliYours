@@ -1,8 +1,4 @@
-/**
- * Portfolio/Projects API Route
- * Route: GET, POST /api/portfolio
- * Handles project listing and creation
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'

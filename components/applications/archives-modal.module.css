@@ -1,0 +1,230 @@
+
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.modalContent {
+  background: var(--card);
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 1400px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.25rem 0;
+  font-family: var(--font-outfit);
+}
+
+.modalSubtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  font-family: var(--font-jakarta);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.errorMessage {
+  padding: 1rem;
+  margin: 1rem 1.5rem 0;
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-family: var(--font-jakarta);
+}
+
+.content {
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.emptyIcon {
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.applicationsTable {
+  padding: 0;
+  overflow: visible;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: var(--muted);
+}
+
+.table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  font-family: var(--font-outfit);
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9375rem;
+  font-family: var(--font-jakarta);
+  position: relative;
+  overflow: visible;
+}
+
+.table tbody tr:hover {
+  background: var(--muted);
+}
+
+.companyCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.company {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.location {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.statusBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.statusDraft {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.statusApplied {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.statusInterview {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.statusOffer {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.statusRejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.statusWithdrawn {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.checkmark {
+  color: #10b981;
+  font-weight: bold;
+}
+
+.noCv {
+  color: var(--muted-foreground);
+}
+
+.unarchiveButton {
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-jakarta);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.unarchiveButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.unarchiveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .table {
+    font-size: 0.875rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+

@@ -1,10 +1,5 @@
-/**
- * Type Definitions
- * Shared TypeScript interfaces and types used throughout the application
- * These types correspond to the Prisma schema models
- */
 
-// User types
+
 export interface UserProfile {
   id: string
   email: string
@@ -14,7 +9,6 @@ export interface UserProfile {
   avatar?: string | null
 }
 
-// CV types
 export interface CVData {
   fileName: string
   fileUrl: string
@@ -22,7 +16,6 @@ export interface CVData {
   mimeType: string
 }
 
-// GitHub Project types
 export interface GitHubProjectData {
   name: string
   description?: string | null
@@ -34,7 +27,6 @@ export interface GitHubProjectData {
   isPublic: boolean
 }
 
-// Upwork Project types
 export interface UpworkProjectData {
   title: string
   description?: string | null
@@ -47,7 +39,6 @@ export interface UpworkProjectData {
   url?: string | null
 }
 
-// Experience types
 export interface ExperienceData {
   title: string
   company: string
@@ -58,7 +49,6 @@ export interface ExperienceData {
   isCurrent: boolean
 }
 
-// Application types
 export interface ApplicationData {
   jobTitle: string
   company: string
@@ -69,7 +59,6 @@ export interface ApplicationData {
   jobUrl?: string | null
 }
 
-// Portfolio types
 export interface PortfolioItemData {
   title: string
   description?: string | null

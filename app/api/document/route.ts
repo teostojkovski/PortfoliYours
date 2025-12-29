@@ -1,8 +1,4 @@
-/**
- * Document API Route
- * Route: GET, POST /api/document
- * Handles document listing and creation
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'

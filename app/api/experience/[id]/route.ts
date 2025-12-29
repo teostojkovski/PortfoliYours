@@ -1,8 +1,4 @@
-/**
- * Experience API Route
- * Route: PUT, DELETE /api/experience/[id]
- * Handles experience update and deletion
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
@@ -11,9 +7,9 @@ import { updateExperience, deleteExperience } from '@/lib/services/experience'
 import { experienceSchema } from '@/lib/validations/experience'
 import { z } from 'zod'
 
-export async function PUT(
+export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -22,10 +18,52 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
-    const experience = await updateExperience(params.id, session.user.id, body)
+    const { id } = await params
+    const { getExperienceById } = await import('@/lib/services/experience')
+    const experience = await getExperienceById(id, session.user.id)
 
-    return NextResponse.json({ experience }, { status: 200 })
+    if (!experience) {
+      return NextResponse.json({ error: 'Experience not found' }, { status: 404 })
+    }
+
+    const experienceData = {
+      ...experience,
+      skillIds: experience.experienceSkills?.map((es: any) => es.skillId) || [],
+    }
+    delete (experienceData as any).experienceSkills
+
+    return NextResponse.json({ experience: experienceData }, { status: 200 })
+  } catch (error) {
+    console.error('Experience fetch error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { id } = await params
+    const body = await request.json()
+    const experience = await updateExperience(id, session.user.id, body)
+
+    const experienceData = {
+      ...experience,
+      skillIds: (experience as any).experienceSkills?.map((es: any) => es.skillId) || [],
+    }
+    delete (experienceData as any).experienceSkills
+
+    return NextResponse.json({ experience: experienceData }, { status: 200 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -51,7 +89,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -60,7 +98,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await deleteExperience(params.id, session.user.id)
+    const { id } = await params
+    await deleteExperience(id, session.user.id)
 
     return NextResponse.json({ message: 'Experience deleted' }, { status: 200 })
   } catch (error) {

@@ -1,4 +1,4 @@
-/* Applications List Styles */
+
 
 .applicationsPage {
   max-width: 1400px;
@@ -11,6 +11,12 @@
   justify-content: space-between;
   margin-bottom: 2rem;
   gap: 2rem;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .pageTitle {
@@ -45,6 +51,29 @@
 .newButton:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+.archiveButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--muted);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-family: var(--font-jakarta);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.archiveButton:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--accent);
 }
 
 .filters {
@@ -101,7 +130,7 @@
 
 .applicationsTable {
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .table {
@@ -128,6 +157,8 @@
   border-bottom: 1px solid var(--border);
   font-size: 0.9375rem;
   font-family: var(--font-jakarta);
+  position: relative;
+  overflow: visible;
 }
 
 .table tbody tr:hover {
@@ -156,6 +187,62 @@
   font-size: 0.875rem;
   font-weight: 500;
   display: inline-block;
+}
+
+.statusBadgeClickable {
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s ease;
+}
+
+.statusBadgeClickable:hover {
+  opacity: 0.8;
+}
+
+.statusBadgeClickable:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.statusContainer {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.statusDropdown {
+  position: fixed;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 120px;
+  overflow: hidden;
+}
+
+.statusOption {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-family: var(--font-jakarta);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.statusOption:hover {
+  background: var(--muted);
+}
+
+.statusOptionActive {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 500;
 }
 
 .statusDraft {

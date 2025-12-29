@@ -9,6 +9,7 @@ export const experienceSchema = z.object({
   endDate: z.string().optional().nullable().transform((str) => str ? new Date(str) : null),
   bullets: z.array(z.string().min(1, 'Bullet point cannot be empty').max(500, 'Bullet point must be less than 500 characters')).min(1, 'At least one responsibility/achievement is required'),
   projectIds: z.array(z.string()).optional().default([]),
+  skillIds: z.array(z.string()).optional().default([]),
 }).refine(
   (data) => {
     if (data.endDate && data.startDate) {

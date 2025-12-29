@@ -23,7 +23,7 @@ export function validateFileType(mimeType: string): string {
   return fileType
 }
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 export function validateFileSize(fileSize: number): boolean {
   return fileSize <= MAX_FILE_SIZE
@@ -76,7 +76,6 @@ export async function updateDocument(
 ) {
   const validatedData = documentUpdateSchema.parse(data)
 
-  // Verify ownership
   const existing = await prisma.document.findFirst({
     where: { id: documentId, userId },
   })

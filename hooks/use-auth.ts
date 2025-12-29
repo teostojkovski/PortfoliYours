@@ -1,7 +1,4 @@
-/**
- * Custom hook for authentication
- * Provides access to session and authentication methods
- */
+
 
 import { useSession } from 'next-auth/react'
 

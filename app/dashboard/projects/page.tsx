@@ -1,8 +1,4 @@
-/**
- * Projects Page
- * Route: /dashboard/projects
- * Lists all user's projects
- */
+
 
 import { Suspense } from 'react'
 import { getServerSession } from 'next-auth'

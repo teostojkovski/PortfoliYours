@@ -1,12 +1,10 @@
-/**
- * Project Form Modal Component
- * Create/Edit project form
- */
+
 
 'use client'
 
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
+import { DatePicker } from '@/components/ui/date-picker'
 import styles from './project-form-modal.module.css'
 
 interface Project {
@@ -20,6 +18,17 @@ interface Project {
   isPublished: boolean
   startDate: Date | null
   endDate: Date | null
+  createdAt: Date
+  updatedAt: Date
+  skillIds?: string[]
+}
+
+interface Skill {
+  id: string
+  name: string
+  category: {
+    name: string
+  }
 }
 
 interface ProjectFormModalProps {
@@ -41,8 +50,24 @@ export function ProjectFormModal({ project, onClose, onSave }: ProjectFormModalP
   const [isPublished, setIsPublished] = useState(false)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([])
+  const [availableSkills, setAvailableSkills] = useState<Skill[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+
+  useEffect(() => {
+
+    fetch('/api/skills')
+      .then(res => res.json())
+      .then(data => {
+        if (data.skills) {
+          setAvailableSkills(data.skills)
+        }
+      })
+      .catch(() => {
+
+      })
+  }, [])
 
   useEffect(() => {
     if (project) {
@@ -55,6 +80,9 @@ export function ProjectFormModal({ project, onClose, onSave }: ProjectFormModalP
       setIsPublished(project.isPublished)
       setStartDate(project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : '')
       setEndDate(project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : '')
+      setSelectedSkillIds(project.skillIds || [])
+    } else {
+      setSelectedSkillIds([])
     }
   }, [project])
 
@@ -68,6 +96,14 @@ export function ProjectFormModal({ project, onClose, onSave }: ProjectFormModalP
 
   const handleRemoveTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove))
+  }
+
+  const toggleSkill = (skillId: string) => {
+    setSelectedSkillIds(prev =>
+      prev.includes(skillId)
+        ? prev.filter(id => id !== skillId)
+        : [...prev, skillId]
+    )
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,6 +122,7 @@ export function ProjectFormModal({ project, onClose, onSave }: ProjectFormModalP
         isPublished,
         startDate: startDate || undefined,
         endDate: endDate || undefined,
+        skillIds: selectedSkillIds,
       }
 
       const url_path = project ? `/api/portfolio/${project.id}` : '/api/portfolio'
@@ -208,6 +245,31 @@ export function ProjectFormModal({ project, onClose, onSave }: ProjectFormModalP
           </div>
 
           <div className={styles.formGroup}>
+            <label htmlFor="skills" className={styles.label}>
+              Skills
+            </label>
+            <div className={styles.skillsContainer}>
+              {availableSkills.length === 0 ? (
+                <p className={styles.hint}>No skills available. Add skills in the Skills section first.</p>
+              ) : (
+                <div className={styles.skillsGrid}>
+                  {availableSkills.map((skill) => (
+                    <label key={skill.id} className={styles.skillCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={selectedSkillIds.includes(skill.id)}
+                        onChange={() => toggleSkill(skill.id)}
+                      />
+                      <span>{skill.name}</span>
+                      <span className={styles.skillCategory}>{skill.category.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
             <label htmlFor="tags" className={styles.label}>
               Tech stack
             </label>
@@ -272,12 +334,10 @@ export function ProjectFormModal({ project, onClose, onSave }: ProjectFormModalP
               <label htmlFor="startDate" className={styles.label}>
                 Start date (optional)
               </label>
-              <input
+              <DatePicker
                 id="startDate"
-                type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className={styles.input}
               />
             </div>
 
@@ -285,12 +345,10 @@ export function ProjectFormModal({ project, onClose, onSave }: ProjectFormModalP
               <label htmlFor="endDate" className={styles.label}>
                 End date (optional)
               </label>
-              <input
+              <DatePicker
                 id="endDate"
-                type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className={styles.input}
               />
             </div>
           </div>

@@ -1,8 +1,4 @@
-/**
- * Skill API Route
- * Route: PUT, DELETE /api/skills/[id]
- * Handles skill update and deletion
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
@@ -13,7 +9,7 @@ import { z } from 'zod'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -22,8 +18,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
-    const skill = await updateSkill(params.id, session.user.id, body)
+    const skill = await updateSkill(id, session.user.id, body)
 
     return NextResponse.json({ skill }, { status: 200 })
   } catch (error) {
@@ -51,7 +48,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -60,7 +57,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await deleteSkill(params.id, session.user.id)
+    const { id } = await params
+    await deleteSkill(id, session.user.id)
 
     return NextResponse.json({ message: 'Skill deleted' }, { status: 200 })
   } catch (error) {

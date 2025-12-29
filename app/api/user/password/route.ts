@@ -1,8 +1,4 @@
-/**
- * Password Change API Route
- * Route: PUT /api/user/password
- * Changes user password
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
@@ -27,7 +23,6 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const validatedData = passwordChangeSchema.parse(body)
 
-    // Get user with password
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { password: true },
@@ -40,7 +35,6 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Verify current password
     const isPasswordValid = await bcrypt.compare(
       validatedData.currentPassword,
       user.password
@@ -53,10 +47,8 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Hash new password
     const hashedPassword = await bcrypt.hash(validatedData.newPassword, 10)
 
-    // Update password
     await prisma.user.update({
       where: { id: session.user.id },
       data: { password: hashedPassword },

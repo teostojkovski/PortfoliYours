@@ -1,7 +1,4 @@
-/**
- * Dashboard Sidebar Component
- * Persistent sidebar navigation for dashboard sections
- */
+
 
 'use client'
 
@@ -46,7 +43,7 @@ export function DashboardSidebar() {
 
   useEffect(() => {
     if (session?.user?.id) {
-      // Check if public profile is enabled
+
       const checkPublicProfile = () => {
         fetch('/api/public-profile')
           .then(res => res.json())
@@ -62,17 +59,24 @@ export function DashboardSidebar() {
           })
       }
 
-      // Check immediately and whenever pathname changes
-      // This ensures the tab appears when they enable it in settings and navigate back
       checkPublicProfile()
+
+      const handlePublicProfileUpdate = () => {
+        checkPublicProfile()
+      }
+
+      window.addEventListener('publicProfileUpdated', handlePublicProfileUpdate)
+
+      return () => {
+        window.removeEventListener('publicProfileUpdated', handlePublicProfileUpdate)
+      }
     }
   }, [session, pathname])
 
-  // Build nav items dynamically based on public profile status
   const navItems = [
-    ...baseNavItems.slice(0, 7), // All items before Settings
+    ...baseNavItems.slice(0, 7),
     ...(publicProfileEnabled ? [{ icon: Eye, label: 'Public Profile', href: '/dashboard/public-profile' }] : []),
-    baseNavItems[7], // Settings always last
+    baseNavItems[7],
   ]
 
   return (
@@ -103,7 +107,7 @@ export function DashboardSidebar() {
       <nav className={styles.sidebarNav}>
         {navItems.map((item) => {
           const Icon = item.icon
-          // Fix: Only mark as active if it's an exact match or a child route (but not if dashboard is parent of everything)
+
           const isActive = item.href === ROUTES.DASHBOARD
             ? pathname === ROUTES.DASHBOARD
             : pathname === item.href || pathname.startsWith(item.href + '/')

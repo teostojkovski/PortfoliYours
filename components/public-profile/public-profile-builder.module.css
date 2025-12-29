@@ -1,4 +1,4 @@
-/* Public Profile Builder Styles */
+
 
 .builderPage {
   max-width: 1200px;
@@ -107,9 +107,13 @@
 }
 
 .avatar {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--border);
+  overflow: hidden;
+  display: block;
 }
 
 .avatarPlaceholder {
@@ -211,8 +215,6 @@
 
 .selectableCard.selected {
   border-color: var(--primary);
-  background: var(--primary);
-  background-opacity: 0.1;
 }
 
 .cardCheckbox {
@@ -220,6 +222,18 @@
   top: 1rem;
   right: 1rem;
   z-index: 1;
+  pointer-events: none;
+}
+
+.cardCheckbox input {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.cardCheckbox input:focus,
+.cardCheckbox input:active {
+  outline: none;
+  box-shadow: none;
 }
 
 .cardImage {
@@ -303,12 +317,22 @@
 
 .experienceItem.selected {
   border-color: var(--primary);
-  background: var(--primary);
-  background-opacity: 0.1;
 }
 
 .experienceCheckbox {
   margin-top: 0.25rem;
+  pointer-events: none;
+}
+
+.experienceCheckbox input {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.experienceCheckbox input:focus,
+.experienceCheckbox input:active {
+  outline: none;
+  box-shadow: none;
 }
 
 .experienceContent {
@@ -368,12 +392,22 @@
 
 .cvItem.selected {
   border-color: var(--primary);
-  background: var(--primary);
-  background-opacity: 0.1;
 }
 
 .cvRadio {
   flex-shrink: 0;
+  pointer-events: none;
+}
+
+.cvRadio input {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.cvRadio input:focus,
+.cvRadio input:active {
+  outline: none;
+  box-shadow: none;
 }
 
 .cvContent {
@@ -403,11 +437,22 @@
   font-size: 0.875rem;
   font-family: var(--font-jakarta);
   transition: all 0.2s ease;
+  pointer-events: auto;
 }
 
 .cvDownload:hover {
   background: var(--accent);
   color: var(--accent-foreground);
+}
+
+.cvDownload svg {
+  pointer-events: none;
+}
+
+.cvDownload:focus svg,
+.cvDownload:active svg {
+  outline: none;
+  box-shadow: none;
 }
 
 .emptyState {

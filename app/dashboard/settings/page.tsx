@@ -1,8 +1,4 @@
-/**
- * Settings Page
- * Route: /dashboard/settings
- * Control center for identity, privacy, security, and data
- */
+
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -16,7 +12,6 @@ export default async function SettingsPage() {
     return <div>Unauthorized</div>
   }
 
-  // Get user data for settings
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     include: {

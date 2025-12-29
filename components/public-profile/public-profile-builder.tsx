@@ -1,7 +1,4 @@
-/**
- * Public Profile Builder Component
- * Editable interface for building public profile
- */
+
 
 'use client'
 
@@ -35,6 +32,7 @@ interface User {
     id: string
     slug: string
     enabled: boolean
+    seoIndexable: boolean
     selectedProjectIds: string[]
     selectedExperienceIds: string[]
     selectedCvId: string | null
@@ -111,7 +109,7 @@ export function PublicProfileBuilder({ user: initialUser }: PublicProfileBuilder
             selectedProjectIds: selectedProjects,
             selectedExperienceIds: selectedExperiences,
             selectedCvId: selectedCvId,
-            // Keep existing settings
+
             seoIndexable: initialUser.publicProfile?.seoIndexable || false,
             showProfile: true,
             showSkills: true,
@@ -171,25 +169,13 @@ export function PublicProfileBuilder({ user: initialUser }: PublicProfileBuilder
     <div className={styles.builderPage}>
       <div className={styles.builderHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Public Profile Builder</h1>
           <p className={styles.pageDescription}>
             Customize what appears on your public profile
           </p>
         </div>
-        {publicUrl && (
-          <a
-            href={publicUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.previewLink}
-          >
-            <ExternalLink size={16} />
-            Preview Public Profile
-          </a>
-        )}
       </div>
 
-      {/* Basic Information */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Basic Information</h2>
         <div className={styles.basicInfo}>
@@ -242,7 +228,7 @@ export function PublicProfileBuilder({ user: initialUser }: PublicProfileBuilder
         )}
       </Card>
 
-      {/* Social Links */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Social Links</h2>
         <div className={styles.socialLinks}>
@@ -276,7 +262,7 @@ export function PublicProfileBuilder({ user: initialUser }: PublicProfileBuilder
         </div>
       </Card>
 
-      {/* Projects Selection */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Select Projects to Display</h2>
         <p className={styles.sectionDescription}>
@@ -289,13 +275,15 @@ export function PublicProfileBuilder({ user: initialUser }: PublicProfileBuilder
             {initialUser.portfolioItems.map((project) => (
               <div
                 key={project.id}
-                className={styles.selectableCard}
+                className={`${styles.selectableCard} ${selectedProjects.includes(project.id) ? styles.selected : ''}`}
+                onClick={() => toggleProject(project.id)}
               >
-                <div className={styles.cardCheckbox}>
+                <div className={styles.cardCheckbox} onClick={(e) => e.stopPropagation()}>
                   <input
                     type="checkbox"
                     checked={selectedProjects.includes(project.id)}
                     onChange={() => toggleProject(project.id)}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </div>
                 {project.imageUrl && (
@@ -328,7 +316,7 @@ export function PublicProfileBuilder({ user: initialUser }: PublicProfileBuilder
         )}
       </Card>
 
-      {/* Experiences Selection */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Select Experiences to Display</h2>
         <p className={styles.sectionDescription}>
@@ -341,13 +329,15 @@ export function PublicProfileBuilder({ user: initialUser }: PublicProfileBuilder
             {initialUser.experiences.map((experience) => (
               <div
                 key={experience.id}
-                className={styles.experienceItem}
+                className={`${styles.experienceItem} ${selectedExperiences.includes(experience.id) ? styles.selected : ''}`}
+                onClick={() => toggleExperience(experience.id)}
               >
-                <div className={styles.experienceCheckbox}>
+                <div className={styles.experienceCheckbox} onClick={(e) => e.stopPropagation()}>
                   <input
                     type="checkbox"
                     checked={selectedExperiences.includes(experience.id)}
                     onChange={() => toggleExperience(experience.id)}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </div>
                 <div className={styles.experienceContent}>
@@ -369,7 +359,7 @@ export function PublicProfileBuilder({ user: initialUser }: PublicProfileBuilder
         )}
       </Card>
 
-      {/* CV Selection */}
+      {}
       <Card className={styles.sectionCard}>
         <h2 className={styles.sectionTitle}>Select CV for Download</h2>
         <p className={styles.sectionDescription}>

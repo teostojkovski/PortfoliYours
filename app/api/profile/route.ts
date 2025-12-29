@@ -1,8 +1,4 @@
-/**
- * Profile API Route
- * Route: PUT /api/profile
- * Updates user profile information
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'

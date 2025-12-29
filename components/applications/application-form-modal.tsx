@@ -1,7 +1,4 @@
-/**
- * Application Form Modal Component
- * Multi-step form for creating/editing applications
- */
+
 
 'use client'
 
@@ -10,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { DatePicker } from '@/components/ui/date-picker'
 import styles from './application-form-modal.module.css'
 
 interface Application {
@@ -58,7 +56,7 @@ export function ApplicationFormModal({ application, onClose, onSuccess }: Applic
   })
 
   useEffect(() => {
-    // Fetch available documents
+
     fetch('/api/documents')
       .then((res) => res.json())
       .then((data) => {
@@ -175,9 +173,8 @@ export function ApplicationFormModal({ application, onClose, onSuccess }: Applic
 
         <div className={styles.formField}>
           <Label htmlFor="appliedAt">Applied date</Label>
-          <Input
+          <DatePicker
             id="appliedAt"
-            type="date"
             value={formData.appliedAt}
             onChange={(e) => setFormData({ ...formData, appliedAt: e.target.value })}
           />
@@ -327,9 +324,8 @@ export function ApplicationFormModal({ application, onClose, onSuccess }: Applic
 
         <div className={styles.formField}>
           <Label htmlFor="followUpAt">Follow-up date</Label>
-          <Input
+          <DatePicker
             id="followUpAt"
-            type="date"
             value={formData.followUpAt}
             onChange={(e) => setFormData({ ...formData, followUpAt: e.target.value })}
           />

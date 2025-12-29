@@ -1,8 +1,4 @@
-/**
- * Project Detail Page
- * Route: /dashboard/projects/[id]
- * Shows detailed view of a single project
- */
+
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'

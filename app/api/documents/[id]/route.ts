@@ -1,8 +1,4 @@
-/**
- * Document API Route
- * Route: GET, PUT, DELETE /api/documents/[id]
- * Handles document retrieval, update, and deletion
- */
+
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
@@ -13,7 +9,7 @@ import { z } from 'zod'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -22,7 +18,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const document = await getDocumentById(params.id, session.user.id)
+    const { id } = await params
+    const document = await getDocumentById(id, session.user.id)
 
     if (!document) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 })
@@ -40,7 +37,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -49,8 +46,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
-    const document = await updateDocument(params.id, session.user.id, body)
+    const document = await updateDocument(id, session.user.id, body)
 
     return NextResponse.json({ document }, { status: 200 })
   } catch (error) {
@@ -78,7 +76,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -87,7 +85,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await deleteDocument(params.id, session.user.id)
+    const { id } = await params
+    await deleteDocument(id, session.user.id)
 
     return NextResponse.json({ message: 'Document deleted' }, { status: 200 })
   } catch (error) {
